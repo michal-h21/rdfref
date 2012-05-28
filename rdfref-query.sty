@@ -1,5 +1,5 @@
 \ProvidesPackage{rdfref-query}
-
+\RequirePackage{rdfref-core}
 \def\Var#1{Variable: #1}
 \def\Value#1{Value: #1}
 
@@ -24,7 +24,9 @@
 \egroup%
 }
 \newcommand\DeclareQueryProcessor[2]{%
-\csgdef{rdfquery@proc@#1}##1{#2}%
+\csgdef{rdfquery@proc@#1}##1{%
+\def\continue{##1}%
+#2}%
 }
 
 \DeclareQueryProcessor{vlv}{%
@@ -33,12 +35,18 @@
 \MapPropertyList\predicate{%
 \SaveVal\subject{\First##1}%
 \SaveVal\object{\Second##1}%
-#1}%
+\continue
+}%
 }
 
 
 
-\DeclareQueryProcessor{llv}{Máme llv}
+\DeclareQueryProcessor{llv}{
+\def\Value##1{##1}%
+\def\Var##1{##1}%
+\SaveVal\object{\GetProperty{\subject}{\predicate}}%
+\continue
+}%
 
 \newcommand\Bind[4]{%
 \bgroup%
@@ -46,7 +54,8 @@
 \BindVal\predicate{#2}%
 \BindVal\object{#3}%
 %S:\subject P:\predicate O:\object
-\QueryType\subject\predicate\object
+%\detokenize{Bind #1 - #2 - #3 - #4 - #5 - #6 - #7 - #8: kkkk;;}
+\QueryType\subject\predicate\object%
 \ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
 \egroup%
 }

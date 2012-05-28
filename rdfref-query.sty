@@ -44,8 +44,8 @@
 \DeclareQueryProcessor{llv}{%
 \def\Value##1{##1}%
 \def\Var##1{##1}%
-\SaveVal\object{\GetProperty{\subject}{\predicate}}%
-\continue
+\IfProperty{\subject}{\predicate}{\SaveVal\object{\GetProperty{\subject}{\predicate}}\continue}{}
+%\continue
 }%
 
 \DeclareQueryProcessor{lll}{%

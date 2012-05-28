@@ -41,12 +41,17 @@
 
 
 
-\DeclareQueryProcessor{llv}{
+\DeclareQueryProcessor{llv}{%
 \def\Value##1{##1}%
 \def\Var##1{##1}%
 \SaveVal\object{\GetProperty{\subject}{\predicate}}%
 \continue
 }%
+
+\DeclareQueryProcessor{lll}{%
+M\'ame lll :\subject\ \predicate\ \object\\
+\IfStrEq{\GetProperty{\subject}{\predicate}}{\object}{\continue}{Neshoduj\'i se}
+}
 
 \newcommand\Bind[4]{%
 \bgroup%

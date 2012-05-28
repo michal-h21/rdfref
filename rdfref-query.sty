@@ -1,0 +1,54 @@
+\ProvidesPackage{rdfref-query}
+
+\def\Var#1{Variable: #1}
+\def\Value#1{Value: #1}
+
+\newcommand\BindVal[2]{%
+\IfBeginWith{#2}{?}{%
+\ifcsdef{rdfquery@#2}{\def#1{\Value{\csuse{rdfquery@#2}}}}{\def#1{\Var{#2}}}%
+}{\def#1{\Value{#2}}}%
+}
+
+\newcommand\SaveVal[2]{%
+\csdef{rdfquery@#1}{#2}%
+}
+
+\newcommand\GetVal[1]{%
+\csuse{rdfquery@#1}%
+}
+\newcommand\QueryType[3]{%
+\bgroup%
+\def\Var##1{v}%
+\def\Value##1{l}%
+\xdef\qtype{#1#2#3}%
+\egroup%
+}
+\newcommand\DeclareQueryProcessor[2]{%
+\csgdef{rdfquery@proc@#1}##1{#2}%
+}
+
+\DeclareQueryProcessor{vlv}{%
+\def\Value##1{##1}%
+\def\Var##1{##1}%
+\MapPropertyList\predicate{%
+\SaveVal\subject{\First##1}%
+\SaveVal\object{\Second##1}%
+#1}%
+}
+
+
+
+\DeclareQueryProcessor{llv}{Máme llv}
+
+\newcommand\Bind[4]{%
+\bgroup%
+\BindVal\subject{#1}%
+\BindVal\predicate{#2}%
+\BindVal\object{#3}%
+%S:\subject P:\predicate O:\object
+\QueryType\subject\predicate\object
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+\egroup%
+}
+
+\endinput

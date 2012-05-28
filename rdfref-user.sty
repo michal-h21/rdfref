@@ -1,0 +1,84 @@
+\ProvidesPackage{rdfref-user}
+\RequirePackage{rdfref-core,nameref}
+\newwrite\exportfile
+\def\RootObject{_:doc}
+
+\def\CurrentObject{\RootObject}
+
+\newcommand\AddRdfType[2]{%
+\def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}
+%\csgdef{rdf:type@#1}{\unexpanded{#2}}
+\docsvlist{#1}
+}
+\newcommand\AddProperty[2]{%
+\AddTriple{\CurrentObject}{#1}{#2}
+}
+
+
+\newcommand\WithObject[2]{%
+\begingroup%
+\def\CurrentObject{#1}%
+\def\run{#2}
+\run%
+\endgroup%
+}
+
+
+
+\newcommand\rdflabel[1]{%
+\AddTriple{#1}{doc:hasParent}{\CurrentObject}%
+\AddTriple{#1}{doc:envir}{\@currenvir}%
+\def\CurrentObject{#1}%
+\ifcsdef{rdf:type@\GuessRdfType{#1}}%
+{\csuse{rdf:type@\GuessRdfType{#1}}}%
+{\typeout{Package rdfref error: unknown type of reference #1 :\GuessRdfType{#1}:}}%
+\label{#1}
+}
+
+\newcommand\GuessRdfType[1]{%
+% We first try if current environment is defined as type, if not, then guess type from the parameter
+\ifcsdef{rdf:type@\@currenvir}{\@currenvir}{%
+\ifx\RdfPrefix{#1}\Nil\Nil\else%
+\RdfPrefix{#1}%
+\fi%
+}%
+}
+
+\newcommand\inputontology[1]{%
+\makeatletter
+\count0=\the\catcode`\_
+\catcode`\_=12
+\input{#1}
+\catcode`\_=\the\count0
+\makeatother
+}
+
+\newcommand\ExportGraphviz[2]{%
+digraph G\{
+\forcsvlist{\listadd\typelist}{#1}
+%\forcsvlist{\listadd\propertylist}{#2}
+\def\worker##1##2{%
+%"\ObjectLabel" -> \GetProperty{\First##1}
+\edef\ppp{\GetProperty{##1}{##2}}
+\typeout{Worker: ##1: ##1 : \ppp}
+\IfSubStr{\ppp}{???}{}{%
+"\ObjectLabel" -> %
+\IfSubStr{\ppp}{:}{"\GetProperty{\GetProperty{\ppp}{rdf:type}}{rdfs:label}: \GetProperty{\ppp}{rdfs:label}"}{"\ppp"} %
+%\GetProperty{##1}{##2} 
+ [label="##2"];\\%
+}
+}
+\MapPropertyList{rdf:type}{%
+\xifinlist{\Second##1}{\typelist}{%
+\edef\ObjectLabel{\GetProperty{\Second##1}{rdfs:label}: \GetProperty{\First##1}{rdfs:label}}%
+%\ObjectLabel \& \Second##1\\}
+\bgroup%
+%\MapObjectList{\First##1}{}
+\forcsvlist{\worker{\First##1}}{#2}%
+\egroup
+}%
+{}%
+}
+\}
+}
+\endinput

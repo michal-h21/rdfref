@@ -9,8 +9,8 @@
 \parsecolon#1:\Nil\relax%
 }
 \newcommand\AddTriple[3]{%
-\edef\rdf@object{#3}
-\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
+%\edef\rdf@object{#3}
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}
 }
 
 \newcommand\SetProperty[3]{%

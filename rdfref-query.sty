@@ -59,6 +59,17 @@
  }%
 }
 
+\DeclareQueryProcessor{lvl}{%
+ \def\Value##1{##1}%
+ \def\Var##1{##1}%
+ \MapSubjectList\subject{%
+   \IfStrEq{\GetProperty{\subject}{##1}}{\object}{%
+    \SaveVal\predicate{##1}% 
+    \continue%
+   }{}%
+ }% 
+}
+
 \DeclareQueryProcessor{lll}{%
 \def\Value##1{##1}%
 \def\Var##1{##1}%

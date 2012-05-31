@@ -10,7 +10,6 @@
 }
 
 \newcommand\SaveVal[2]{%
-Saving #2 into #1\\
 \csedef{rdfquery@#1}{#2}%
 }
 
@@ -46,25 +45,33 @@ Saving #2 into #1\\
 \def\Value##1{##1}%
 \def\Var##1{##1}%
 \IfProperty{\subject}{\predicate}{%
- Query processor llv :\subject\ \predicate\ \object;\\  
   \SaveVal\object{\GetProperty{\subject}{\predicate}}
   \continue}{}
 }%
 
+\DeclareQueryProcessor{lvv}{%
+ \def\Value##1{##1}%
+ \def\Var##1{##1}%
+ \MapSubjectList\subject{%
+  \SaveVal\predicate{##1}%
+  \SaveVal\object{\GetProperty{\subject}{##1}}%
+  \continue%
+ }%
+}
+
 \DeclareQueryProcessor{lll}{%
 \def\Value##1{##1}%
 \def\Var##1{##1}%
-%Query processor lll :\subject\ \predicate\ \object;\\
 \IfStrEq{\GetProperty{\subject}{\predicate}}{\object}{\continue}{Neshoduj\'i se}
 }
+
+
 
 \newcommand\Bind[4]{%
 \bgroup%
 \BindVal\subject{#1}%
 \BindVal\predicate{#2}%
 \BindVal\object{#3}%
-%S:\subject P:\predicate O:\object
-%\detokenize{Bind #1 - #2 - #3 - #4 - #5 - #6 - #7 - #8: kkkk;;}
 \QueryType\subject\predicate\object%
 \ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
 \egroup%

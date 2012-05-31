@@ -1,0 +1,662 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2012 by Michal Hoftich <<michal.h21@gmail.com>>
+% ---------------------------------------------------------------------------
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is <+maintainer+>.
+%
+% This work consists of the files <+filebase+>.dtx and <+filebase+>.ins
+% and the derived filebase <+filebase+>.sty.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{rdfref.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<package>\ProvidesPackage{rdfref}
+%<*package>
+    [2012/05/29 0.1 RDF inspired cross-referencing system]
+%</package>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[]{tgschola}
+\usepackage[pdftex,bookmarks,raiselinks,pageanchor,hyperindex,colorlinks]{hyperref}
+\usepackage{lstdoc,microtype}
+\usepackage[listings,theorems,documentation]{tcolorbox}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{rdfref.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{192}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{0.1}{2012/05/29}{Converted to DTX file}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \providecommand*{\url}{\texttt}
+% \GetFileInfo{rdfref.dtx}
+% \title{The \textsf{rdfref} package}
+% \author{Michal Hoftich \\ \url{michal.h21@gmail.com}}
+% \date{\fileversion~from \filedate}
+%
+% \maketitle
+% \tableofcontents
+% \section{Introduction}
+%
+% Put text here.
+%
+% \section{Usage}
+%
+% Put text here.
+%
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*core>
+% \fi
+%
+%    \begin{macrocode}
+\ProvidesPackage{rdfref-core}
+\RequirePackage{etoolbox,xstring}
+%    \end{macrocode}
+%
+% \begin{macro}{\Nil}
+%    \begin{macrocode}
+\def\Nil{}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\First}
+%    \begin{macrocode}
+\def\First#1#2{#1}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Second}
+%    \begin{macrocode}
+\def\Second#1#2{#2}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\parsecolon}
+%    \begin{macrocode}
+\def\parsecolon#1:#2\relax{\ifx#2\Nil\Nil\else#1\fi}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\RdfPrefix}
+%    \begin{macrocode}
+\newcommand\RdfPrefix[1]{%
+\parsecolon#1:\Nil\relax%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\AddTriple}
+%    \begin{macrocode}
+\newcommand\AddTriple[3]{%
+%    \end{macrocode}
+%\edef\rdf@object{#3}
+%    \begin{macrocode}
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\SetProperty}
+%    \begin{macrocode}
+\newcommand\SetProperty[3]{%
+\protected@csxdef{rdf@#1@#2}{#3}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\IfProperty}
+%    \begin{macrocode}
+\newcommand\IfProperty[2]{%
+\ifcsdef{rdf@#1@#2}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\GetProperty}
+%    \begin{macrocode}
+\newcommand\GetProperty[2]{%
+\IfProperty{#1}{#2}{%
+\csuse{rdf@#1@#2}%
+}{%
+\PropertyNotDef{#1}{#2}%
+}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\PropertyNotDef}
+%    \begin{macrocode}
+\newcommand\PropertyNotDef[2]{%
+???%
+%    \end{macrocode}
+%\typeout{rdf warning: subject #1 has no property #2}%
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Hash}
+%    \begin{macrocode}
+\edef\Hash{\string#}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Prefix}
+%    \begin{macrocode}
+\newcommand\Prefix[2]{%
+%    \end{macrocode}
+%\edef\fuf{Prefix #2}
+%    \begin{macrocode}
+\ifcsdef{rdfprefix@#1}{%
+\IfStrEq{\csuse{rdfprefix@#1}}{#2}{%
+\typeout{Prefix #1 already exists for #2}%
+}{\typeout{Prefix clash, uri #2 has already prefix \csuse{rdfprefix@#1}, #1 provided}%
+}}{%
+\csgdef{rdfprefix@#1}{#2}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\SubjectListAdd}
+%    \begin{macrocode}
+\newcommand\SubjectListAdd[2]{%
+\listcsgadd{sbjlst@#1}{#2}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\MapSubjectList}
+%    \begin{macrocode}
+\newcommand\MapSubjectList[2]{%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\do}
+%    \begin{macrocode}
+\def\do##1{#2}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\dolistcsloop{sbjlst@#1}%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\PropertyListAdd}
+%    \begin{macrocode}
+\newcommand\PropertyListAdd[3]{%
+\listcsgadd{prprtlst@#2}{{#1}{#3}}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\MapPropertyList}
+%    \begin{macrocode}
+\newcommand\MapPropertyList[2]{%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\do}
+%    \begin{macrocode}
+\def\do##1{#2}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\dolistcsloop{prprtlst@#1}%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\LoadTriple}
+%    \begin{macrocode}
+\newcommand\LoadTriple[3]{%
+\SetProperty{#1}{#2}{#3}
+\SubjectListAdd{#1}{#2}
+\PropertyListAdd{#1}{#2}{#3}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \iffalse
+%</core>
+% \fi
+%
+% \iffalse
+%<*user>
+% \fi
+%
+%    \begin{macrocode}
+\ProvidesPackage{rdfref-user}
+\RequirePackage{rdfref-core,nameref}
+\newwrite\exportfile
+%    \end{macrocode}
+%
+% \begin{macro}{\RootObject}
+%    \begin{macrocode}
+\def\RootObject{_:doc}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CurrentObject}
+%    \begin{macrocode}
+\def\CurrentObject{\RootObject}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\AddRdfType}
+%    \begin{macrocode}
+\newcommand\AddRdfType[2]{%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\do}
+%    \begin{macrocode}
+\def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}
+%    \end{macrocode}
+% \end{macro}
+%
+%\csgdef{rdf:type@#1}{\unexpanded{#2}}
+%    \begin{macrocode}
+\docsvlist{#1}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\AddProperty}
+%    \begin{macrocode}
+\newcommand\AddProperty[2]{%
+\AddTriple{\CurrentObject}{#1}{#2}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\WithObject}
+%    \begin{macrocode}
+\newcommand\WithObject[2]{%
+\begingroup%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CurrentObject}
+%    \begin{macrocode}
+\def\CurrentObject{#1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\run}
+%    \begin{macrocode}
+\def\run{#2}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\run%
+\endgroup%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\rdflabel}
+%    \begin{macrocode}
+\newcommand\rdflabel[1]{%
+\AddTriple{#1}{doc:hasParent}{\CurrentObject}%
+\AddTriple{#1}{doc:envir}{\@currenvir}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CurrentObject}
+%    \begin{macrocode}
+\def\CurrentObject{#1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\ifcsdef{rdf:type@\GuessRdfType{#1}}%
+{\csuse{rdf:type@\GuessRdfType{#1}}}%
+{\typeout{Package rdfref error: unknown type of reference #1 :\GuessRdfType{#1}:}}%
+\label{#1}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\GuessRdfType}
+%    \begin{macrocode}
+\newcommand\GuessRdfType[1]{%
+%    \end{macrocode}
+% We first try if current environment is defined as type, if not, then guess type from the parameter
+%    \begin{macrocode}
+\ifcsdef{rdf:type@\@currenvir}{\@currenvir}{%
+\ifx\RdfPrefix{#1}\Nil\Nil\else%
+\RdfPrefix{#1}%
+\fi%
+}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\inputontology}
+%    \begin{macrocode}
+\newcommand\inputontology[1]{%
+\makeatletter
+\count0=\the\catcode`\_
+\catcode`\_=12
+\input{#1}
+\catcode`\_=\the\count0
+\makeatother
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\ExportGraphviz}
+%    \begin{macrocode}
+\newcommand\ExportGraphviz[2]{%
+digraph G\{
+\forcsvlist{\listadd\typelist}{#1}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\worker}
+%\forcsvlist{\listadd\propertylist}{#2}
+%    \begin{macrocode}
+\def\worker##1##2{%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\ppp}
+%"\ObjectLabel" -> \GetProperty{\First##1}
+%    \begin{macrocode}
+\edef\ppp{\GetProperty{##1}{##2}}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\typeout{Worker: ##1: ##1 : \ppp}
+\IfSubStr{\ppp}{???}{}{%
+"\ObjectLabel" -> %
+\IfSubStr{\ppp}{:}{"\GetProperty{\GetProperty{\ppp}{rdf:type}}{rdfs:label}: \GetProperty{\ppp}{rdfs:label}"}{"\ppp"} %
+%    \end{macrocode}
+%\GetProperty{##1}{##2} 
+%    \begin{macrocode}
+ [label="##2"];\\%
+}
+}
+\MapPropertyList{rdf:type}{%
+\xifinlist{\Second##1}{\typelist}{%
+%    \end{macrocode}
+%
+% \begin{macro}{\ObjectLabel}
+%    \begin{macrocode}
+\edef\ObjectLabel{\GetProperty{\Second##1}{rdfs:label}: \GetProperty{\First##1}{rdfs:label}}%
+%    \end{macrocode}
+% \end{macro}
+%
+%\ObjectLabel \& \Second##1\\}
+%    \begin{macrocode}
+\bgroup%
+%    \end{macrocode}
+%\MapObjectList{\First##1}{}
+%    \begin{macrocode}
+\forcsvlist{\worker{\First##1}}{#2}%
+\egroup
+}%
+{}%
+}
+\}
+}
+%    \end{macrocode}
+% \iffalse
+%</user>
+% \fi
+% \iffalse
+%<*query>
+% \fi
+%    \begin{macrocode}
+\ProvidesPackage{rdfref-query}
+\RequirePackage{rdfref-core}
+%    \end{macrocode}
+%
+% \begin{macro}{\Var}
+%    \begin{macrocode}
+\def\Var#1{Variable: #1}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Value}
+%    \begin{macrocode}
+\def\Value#1{Value: #1}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\BindVal}
+%    \begin{macrocode}
+\newcommand\BindVal[2]{%
+\IfBeginWith{#2}{?}{%
+\ifcsdef{rdfquery@#2}{\def#1{\Value{\csuse{rdfquery@#2}}}}{\def#1{\Var{#2}}}%
+}{\def#1{\Value{#2}}}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\SaveVal}
+%    \begin{macrocode}
+\newcommand\SaveVal[2]{%
+\csdef{rdfquery@#1}{#2}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\GetVal}
+%    \begin{macrocode}
+\newcommand\GetVal[1]{%
+\csuse{rdfquery@#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\QueryType}
+%    \begin{macrocode}
+\newcommand\QueryType[3]{%
+\bgroup%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Var}
+%    \begin{macrocode}
+\def\Var##1{v}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Value}
+%    \begin{macrocode}
+\def\Value##1{l}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\qtype}
+%    \begin{macrocode}
+\xdef\qtype{#1#2#3}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\egroup%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\DeclareQueryProcessor}
+%    \begin{macrocode}
+\newcommand\DeclareQueryProcessor[2]{%
+\csgdef{rdfquery@proc@#1}##1{%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\continue}
+%    \begin{macrocode}
+\def\continue{##1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+#2}%
+}
+\DeclareQueryProcessor{vlv}{%
+%    \end{macrocode}
+%
+% \begin{macro}{\Value}
+%    \begin{macrocode}
+\def\Value##1{##1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Var}
+%    \begin{macrocode}
+\def\Var##1{##1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\MapPropertyList\predicate{%
+\SaveVal\subject{\First##1}%
+\SaveVal\object{\Second##1}%
+\continue
+}%
+}
+\DeclareQueryProcessor{llv}{%
+%    \end{macrocode}
+%
+% \begin{macro}{\Value}
+%    \begin{macrocode}
+\def\Value##1{##1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Var}
+%    \begin{macrocode}
+\def\Var##1{##1}%
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\IfProperty{\subject}{\predicate}{\SaveVal\object{\GetProperty{\subject}{\predicate}}\continue}{}
+%    \end{macrocode}
+%\continue
+%    \begin{macrocode}
+}%
+\DeclareQueryProcessor{lll}{%
+M\'ame lll :\subject\ \predicate\ \object\\
+\IfStrEq{\GetProperty{\subject}{\predicate}}{\object}{\continue}{Neshoduj\'i se}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\Bind}
+%    \begin{macrocode}
+\newcommand\Bind[4]{%
+\bgroup%
+\BindVal\subject{#1}%
+\BindVal\predicate{#2}%
+\BindVal\object{#3}%
+%    \end{macrocode}
+%S:\subject P:\predicate O:\object
+%\detokenize{Bind #1 - #2 - #3 - #4 - #5 - #6 - #7 - #8: kkkk;;}
+%    \begin{macrocode}
+\QueryType\subject\predicate\object%
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+\egroup%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \iffalse
+%</query>
+% \fi
+% \Finale
+\endinput
+

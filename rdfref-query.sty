@@ -87,15 +87,15 @@
 \ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
 \egroup%
 }
-\newcommand\OptionalBind[4]{%
-\bgroup%
+\newcommand\OptionalBind[3]{%
+%\bgroup%
 \BindVal\subject{#1}%
 \BindVal\predicate{#2}%
 \BindVal\object{#3}%
 \QueryType\subject\predicate\object%
 \ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
-#4
-\egroup%  
+%#4
+%\egroup%  
 }
 
 \endinput

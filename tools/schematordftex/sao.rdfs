@@ -1,0 +1,54 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xml:base="http://salt.semanticauthoring.org/ontologies/sao#"
+         xmlns:sdo="http://salt.semanticauthoring.org/ontologies/sdo#">
+
+	<rdfs:Class rdf:about="#Annotation"
+		 rdfs:label="Annotation">
+		<rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+	</rdfs:Class>
+	<rdfs:Class rdf:about="#CitationContext"
+		rdfs:label="CitationContext">
+		<rdfs:subClassOf rdf:resource="#Annotation"/>
+	</rdfs:Class>
+
+	<rdf:Property rdf:about="#annotates"
+		rdfs:label="annotates">
+		<rdfs:domain rdf:resource="#Annotation"/>
+		<rdfs:range rdf:resource="sdo#Paragraph"/>
+		<rdfs:range rdf:resource="sdo#Section"/>
+		<rdfs:range rdf:resource="sdo#Sentence"/>
+		<rdfs:range rdf:resource="sdo#TextChunk"/>
+	</rdf:Property>
+
+	<rdf:Property rdf:about="#hasTopic"
+		rdfs:label="hasTopic">
+		<rdfs:domain rdf:resource="#Annotation"/>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+	</rdf:Property>
+	<rdf:Property rdf:about="#cites"
+		 rdfs:label="cites">
+		<rdfs:domain rdf:resource="sdo#Publication"/>
+		<rdfs:range rdf:resource="sdo#Publication"/>
+	</rdf:Property>
+	<rdf:Property rdf:about="#isCitedBy"
+		 rdfs:label="isCitedBy">
+		<rdfs:domain rdf:resource="sdo#Publication"/>
+		<rdfs:range rdf:resource="sdo#Publication"/>
+	</rdf:Property>
+	<rdf:Property rdf:about="#hasCitationKey"
+		 rdfs:label="hasCitationKey">
+		<rdfs:domain rdf:resource="sdo#Publication"/>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+	</rdf:Property>
+	<rdf:Property rdf:about="#hasCitationContext"
+		 rdfs:label="hasCitationContext">
+		<rdfs:domain rdf:resource="sdo#Publication"/>
+		<rdfs:range rdf:resource="#CitationContext"/>
+	</rdf:Property>
+	<rdf:Property rdf:about="#pointsTo"
+		 rdfs:label="pointsTo">
+		<rdfs:domain rdf:resource="#CitationContext"/>
+		<rdfs:range rdf:resource="sdo#Publication"/>
+	</rdf:Property>
+</rdf:RDF>

@@ -23,9 +23,11 @@ x = xmlParser(h)
 x:parse(xml)
 print("Delka ss "..#h.root["rdf:RDF"]["rdfs:Class"])
 --local types={"rdfs:Class"=1,"rdf:Property"=1}
-for k,v in pairs(h.root["rdf:RDF"]) do
+for k,v in pairs(h.root["rdf:RDF"]["rdfs:Class"]) do
    print(k .." : ")
    for m,n in pairs(v) do
-     print(m)
+    --- if m=="rdfs:Class" or m=="rdf:Property" then
+       print(m)
+    -- end
    end
 end

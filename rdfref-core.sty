@@ -11,6 +11,13 @@
 \newcommand\AddTriple[3]{%
 %\edef\rdf@object{#3}
 \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}
+%\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
+}
+
+% If we need to write something expanded, like \thepage
+\newcommand\AddTripleEx[3]{%
+\edef\rdf@object{#3}
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
 }
 
 \newcommand\SetProperty[3]{%

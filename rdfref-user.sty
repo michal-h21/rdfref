@@ -47,12 +47,13 @@
 }%
 }
 
+\newcount\undercat
 \newcommand\inputontology[1]{%
 \makeatletter
-\count0=\the\catcode`\_
+\undercat=\the\catcode`\_
 \catcode`\_=12
 \input{#1}
-\catcode`\_=\the\count0
+\catcode`\_=\the\undercat
 \makeatother
 }
 

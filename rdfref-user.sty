@@ -16,6 +16,7 @@
 \def\CurrentObject{\RootObject}
 
 % shouldn't this be in rdfref-core?
+% Save property definitions, they are saved with \rdflabel
 \newcommand\AddRdfType[2]{%
 \def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}
 %\csgdef{rdf:type@#1}{\unexpanded{#2}}

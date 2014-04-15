@@ -3,19 +3,32 @@
 \newwrite\exportfile
 \def\RootObject{_:doc}
 
+% blank nodes support
+% useful for adding unnamed objects
+\newcount\rdf@blank@cnt
+% shouldn't this be document dependent?
+\def\rdf@blk{blank}
+\def\BlankNode{%
+	\advance\rdf@blank@cnt by 1\relax%
+	\expandafter\def\expandafter\CurrentObject\expandafter{_:\rdf@blk\the\rdf@blank@cnt}
+}
+
 \def\CurrentObject{\RootObject}
 
+% shouldn't this be in rdfref-core?
 \newcommand\AddRdfType[2]{%
 \def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}
 %\csgdef{rdf:type@#1}{\unexpanded{#2}}
 \docsvlist{#1}
 }
 \newcommand\AddProperty[2]{%
-\AddTriple{\CurrentObject}{#1}{#2}
+\AddTriple{\CurrentObject}{#1}{#2}%
 }
 
+% add expanded property
+% usefull for adding page numbers etc
 \newcommand\AddPropertyEx[2]{%
-\AddTripleEx{\CurrentObject}{#1}{#2}
+\AddTripleEx{\CurrentObject}{#1}{#2}%
 }
 
 \newcommand\WithObject[2]{%
@@ -26,8 +39,7 @@
 \endgroup%
 }
 
-
-
+% replacement for \label
 \newcommand\rdflabel[1]{%
 \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
 \AddTriple{#1}{doc:envir}{\@currenvir}%
@@ -38,6 +50,31 @@
 \label{#1}
 }
 
+% replacement for \ref
+\newcommand\rdfref@core[1]{%
+	\bgroup%
+	% save \CurrentObject
+	\edef\ParentObject{\CurrentObject}%
+	\BlankNode% \CurrentObject is blank node
+	\AddPropertyEx{doc:hasParent}{\ParentObject}%
+	\AddPropertyEx{doc:pageNo}{\thepage}%
+	\AddPropertyEx{rdf:type}{doc:reference}%
+	\AddPropertyEx{doc:refersTo}{#1}%
+	\AddPropertyEx{rdfs:label}{Reference: \GetProperty{#1}{rdfs:label}}%
+	\egroup%
+}
+	
+\newcommand\rdfref[1]{%
+	\rdfref@core{#1}%
+	\ref{#1}%
+}
+
+\newcommand\rdfpageref[1]{%
+	\rdfref@core{#1}%
+	\ref{#1}%
+}
+
+
 \newcommand\GuessRdfType[1]{%
 % We first try if current environment is defined as type, if not, then guess type from the parameter
 \ifcsdef{rdf:type@\@currenvir}{\@currenvir}{%
@@ -47,6 +84,7 @@
 }%
 }
 
+% import ontology
 \newcount\undercat
 \newcommand\inputontology[1]{%
 \makeatletter
@@ -57,6 +95,7 @@
 \makeatother
 }
 
+% This is horrible
 \newcommand\ExportGraphviz[2]{%
 digraph G\{
 \forcsvlist{\listadd\typelist}{#1}

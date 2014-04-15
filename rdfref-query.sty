@@ -16,6 +16,8 @@
 \newcommand\GetVal[1]{%
 \csuse{rdfquery@#1}%
 }
+
+
 \newcommand\QueryType[3]{%
 \bgroup%
 \def\Var##1{v}%
@@ -30,6 +32,7 @@
 }
 
 \DeclareQueryProcessor{vlv}{%
+% why we redefine \Value and \Var? I should write comments next time
 \def\Value##1{##1}%
 \def\Var##1{##1}%
 \MapPropertyList\predicate{%
@@ -39,7 +42,20 @@
 }%
 }
 
-
+\DeclareQueryProcessor{vll}{%
+	% this is first querry processor after two years, I have no idea what 
+	% needs to be done
+\def\Value##1{##1}
+\def\Var##1{##1}
+\MapPropertyList\predicate{%
+	% only do action if searched \object is equal to current objeect
+	\IfStrEq{\object}{\Second##1}{%
+	% ##1 is variable passed by \do, two tokens are here:
+	  \SaveVal\subject{\First##1}%
+	  \SaveVal\object{\Second##1}%
+    \continue}{}%
+ }%
+}
 
 \DeclareQueryProcessor{llv}{%
 \def\Value##1{##1}%

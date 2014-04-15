@@ -78,11 +78,20 @@ As it was said in theorem \rdfref{thm:euclid}, we see that
 	}%
 }
 \buildtypelist\theoremlist{thm:theorem}
-
 \Bind{?ref}{rdf:type}{doc:reference}{%
 	\edef\ReferedObj{\GetProperty{\GetVal{?ref}}{doc:refersTo}}
 	\edef\ReferedType{\GetProperty{\ReferedObj}{rdf:type}}
-	\typeout{refered type:\ReferedType}
+	\Bind{?ref}{doc:refersTo}{?obj}{
+	  \typeout{refered type:\ReferedType, label\GetValProperty{?obj}{rdfs:label}}
+  }
 }
+
+
+\renewcommand\do[1]{%
+\Bind{?obj}{rdf:type}{#1}{%
+\textbf{\GetValProperty{?obj}{rdfs:label}}
+				\typeout{sss: \GetVal{?obj} - \GetValProperty{?obj}{rdfs:label}} 
+}}
+\dolistloop\theoremlist
 
 \end{document}

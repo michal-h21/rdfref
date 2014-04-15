@@ -13,6 +13,11 @@
 \csedef{rdfquery@#1}{#2}%
 }
 
+\newcommand\GetValProperty[2]{%
+ \expandafter\GetProperty\expandafter{\GetVal{#1}}{#2}%
+}
+
+
 \newcommand\GetVal[1]{%
 \csuse{rdfquery@#1}%
 }

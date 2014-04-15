@@ -10,14 +10,14 @@
 }
 \newcommand\AddTriple[3]{%
 %\edef\rdf@object{#3}
-\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}%
 %\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
 }
 
 % If we need to write something expanded, like \thepage
 \newcommand\AddTripleEx[3]{%
-\edef\rdf@object{#3}
-\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
+\edef\rdf@object{#3}%
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
 }
 
 \newcommand\SetProperty[3]{%
@@ -25,7 +25,7 @@
 }
 
 \newcommand\IfProperty[2]{%
-\ifcsdef{rdf@#1@#2}
+\ifcsdef{rdf@#1@#2}%
 }
 \newcommand\GetProperty[2]{%
 \IfProperty{#1}{#2}{%
@@ -51,7 +51,7 @@
 }
 }
 \newcommand\SubjectListAdd[2]{%
-\listcsgadd{sbjlst@#1}{#2}
+\listcsgadd{sbjlst@#1}{#2}%
 }
 \newcommand\MapSubjectList[2]{%
 \def\do##1{#2}%
@@ -59,7 +59,7 @@
 }
 
 \newcommand\PropertyListAdd[3]{%
-\listcsgadd{prprtlst@#2}{{#1}{#3}}
+\listcsgadd{prprtlst@#2}{{#1}{#3}}%
 }
 \newcommand\MapPropertyList[2]{%
 \def\do##1{#2}%
@@ -68,9 +68,9 @@
 
 
 \newcommand\LoadTriple[3]{%
-\SetProperty{#1}{#2}{#3}
-\SubjectListAdd{#1}{#2}
-\PropertyListAdd{#1}{#2}{#3}
+\SetProperty{#1}{#2}{#3}%
+\SubjectListAdd{#1}{#2}%
+\PropertyListAdd{#1}{#2}{#3}%
 }
 
 

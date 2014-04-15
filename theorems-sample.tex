@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[]{tgschola}
+\usepackage[T1]{fontenc}
+%\catcode`\_=12
+\usepackage[]{rdfref-user,rdfref-query,lipsum,nameref,cleveref}
+\usepackage{amsthm,thmtools,xstring}
+\declaretheorem[name=Lemma,Refname={Lemma,Lemmas}]{lem}
+\declaretheorem[name=Proposition,Refname={Proposition,Proposition}]{prop}
+\declaretheorem[name=Theorem,Refname={Theorem,Theorems}]{thr}
+
+\begin{document}
+\thepage \thepage
+\inputontology{theorem-ontology.tex}
+\let\ref\rdfref
+\thepage
+\section{Hello world}\rdflabel{sec:first}
+\lipsum[1-2]
+  \begin{lem}\rdflabel{thm:lem1}
+    \partOf{thm:thr1}
+    A lemma. Reference to theorem \ref{thm:euclid}
+  \end{lem}
+
+  \begin{prop}
+    \rdflabel{thm:prop1}
+    \partOf{thm:thr1}
+    A proposition.
+    %\renewcommand{\theenumi}{\thecor.\arabic{enumi}}
+    \begin{enumerate}
+      \item An item 
+      \item Another one 
+    \end{enumerate}
+  \end{prop}
+
+  \begin{thr}\rdflabel{thm:thr1}
+    A theorem.
+  \end{thr}
+
+\begin{thr}[Euclid]
+\rdflabel{thm:euclid}%
+For every prime $p$, there is a prime $p’>p$.
+In particular, the list of primes,
+\begin{equation}\rdflabel{eq:1}
+2,3,5,7,\dots
+\end{equation}
+is infinite.
+\end{thr}
+
+As it was said in theorem \rdfref{thm:euclid}, we see that 
+
+\forcsvlist{\listadd\typelist}{sec:sectioning,thm:theorem,eq:equation,thm:proposition,thm:proposition,thm:lemma}
+\forcsvlist{\listadd\proplist}{doc:pageNo,doc:partOf,doc:hasParent}
+\Bind{?x}{rdf:type}{?c}{%
+ \xifinlist{\GetVal{?c}}{\typelist}{%
+  \Bind{?x}{?k}{?v}{%
+   \Bind{?x}{rdfs:label}{?objectl}{%
+   \Bind{?c}{rdfs:label}{?typel}{% 
+    \xifinlist{\GetVal{?k}}{\proplist}{%
+     \IfSubStr{\GetVal{?v}}{:}{\edef\ObjectLabel{\GetProperty{\GetProperty{\GetVal{?v}}{rdf:type}}{rdfs:label}}}{\edef\ObjectLabel{\GetVal{?v}}}
+     \typeout{\GetVal{?objectl} : \GetVal{?typel} \detokenize{má klíč }\GetVal{?k} s hodnotou \ObjectLabel}%
+    }{} 
+   }}%
+  }%
+ }%
+ {\typeout{Objekt \GetVal{?x} neni v listu}}%
+}
+\thepage
+
+\typeout{Tak co sec?: \GetProperty{sec:sectioning}{rdf:type}}
+
+% Make list of objects, which are type of thm:theorem
+
+% use query to add type #2 to list #1
+\newcommand\buildtypelist[2]{%
+	\listadd#1{#2}
+	\Bind{?x}{rdf:type}{#2}{%
+		\listxadd#1{\GetVal{?x}}% must be global and expanded
+	}%
+}
+\buildtypelist\theoremlist{thm:theorem}
+
+\Bind{?ref}{rdf:type}{doc:reference}{%
+	\edef\ReferedObj{\GetProperty{\GetVal{?ref}}{doc:refersTo}}
+	\edef\ReferedType{\GetProperty{\ReferedObj}{rdf:type}}
+	\typeout{refered type:\ReferedType}
+}
+
+\end{document}

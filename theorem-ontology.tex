@@ -1,0 +1,65 @@
+\newcommand\partOf[1]{%
+\AddPropertyEx{doc:partOf}{#1}
+}
+
+
+\AddRdfType{Theorem}{%
+\AddProperty{rdf:type}{thm:theorem}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddProperty{rdfs:label}{\@currentlabel\ \@currentlabelname}
+}
+\AddRdfType{thr}{%
+\AddProperty{rdf:type}{thm:theorem}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddPropertyEx{rdfs:label}{\@currentlabel\ \@currentlabelname}
+}
+\AddRdfType{prop}{%
+\AddProperty{rdf:type}{thm:proposition}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddPropertyEx{rdfs:label}{\@currentlabel\ \@currentlabelname}
+}
+
+\AddRdfType{lem}{%
+\AddProperty{rdf:type}{thm:lemma}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddPropertyEx{rdfs:label}{\@currentlabel\ \@currentlabelname}
+}
+
+
+\AddRdfType{sec}{
+\AddProperty{rdf:type}{sec:sectioning}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddPropertyEx{rdfs:label}{\@currentlabel\ \@currentlabelname}
+\AddPropertyEx{doc:label}{\@currentlabel}
+}
+\AddRdfType{equation}{%
+\AddProperty{rdf:type}{eq:equation}
+\AddPropertyEx{doc:pageNo}{\thepage}
+\AddProperty{rdfs:label}{\@currentlabel\ \@currentlabelname}
+}
+
+%Add properties for classes
+\WithObject{sec:sectioning}{%
+\AddProperty{rdfs:label}{Sectioning}
+\AddProperty{rdf:type}{rdfs:Class}
+}
+\WithObject{thm:theorem}{%
+\AddProperty{rdfs:label}{Theorem}
+\AddProperty{rdf:type}{rdfs:Class}
+}
+\WithObject{thm:proposition}{%
+\AddProperty{rdfs:label}{Proposition}
+\AddProperty{rdf:type}{thm:theorem}
+}
+\WithObject{thm:lemma}{%
+\AddProperty{rdfs:label}{Lemma}
+\AddProperty{rdf:type}{thm:theorem}
+}
+
+\WithObject{eq:equation}{%
+\AddProperty{rdfs:label}{Equation}
+\AddProperty{rdf:type}{thm:theorem}
+}
+\WithObject{rdfs:Class}{%
+\AddProperty{rdfs:label}{Class}
+}

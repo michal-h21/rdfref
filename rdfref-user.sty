@@ -9,8 +9,8 @@
 % shouldn't this be document dependent?
 \def\rdf@blk{blank}
 \def\BlankNode{%
-	\advance\rdf@blank@cnt by 1\relax%
-	\expandafter\def\expandafter\CurrentObject\expandafter{_:\rdf@blk\the\rdf@blank@cnt}
+	\global\advance\rdf@blank@cnt by 1\relax%
+	\expandafter\def\expandafter\CurrentObject\expandafter{_:\rdf@blk\the\rdf@blank@cnt}%
 }
 
 \def\CurrentObject{\RootObject}
@@ -39,6 +39,15 @@
 \endgroup%
 }
 
+% we save these commands in order to enable letting \label etc. to \rdf.. 
+% equivalents
+% this also means, that rdfref should be loaded after all packages that modify
+% ref mechanism (like all others such packages)
+% if something goes wrong, redefine these macros to new definitions again
+\let\rdfref@oldlabel\label
+\let\rdfref@oldref\ref
+\let\rdfref@oldpageref\pageref
+
 % replacement for \label
 \newcommand\rdflabel[1]{%
 \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
@@ -47,13 +56,13 @@
 \ifcsdef{rdf:type@\GuessRdfType{#1}}%
 {\csuse{rdf:type@\GuessRdfType{#1}}}%
 {\typeout{Package rdfref error: unknown type of reference #1 :\GuessRdfType{#1}:}}%
-\label{#1}
+\rdfref@oldlabel{#1}
 }
 
 % replacement for \ref
 \newcommand\rdfref@core[1]{%
 	\bgroup%
-	% save \CurrentObject
+% save \CurrentObject
 	\edef\ParentObject{\CurrentObject}%
 	\BlankNode% \CurrentObject is blank node
 	\AddPropertyEx{doc:hasParent}{\ParentObject}%
@@ -66,12 +75,12 @@
 	
 \newcommand\rdfref[1]{%
 	\rdfref@core{#1}%
-	\ref{#1}%
+	\rdfref@oldref{#1}%
 }
 
 \newcommand\rdfpageref[1]{%
 	\rdfref@core{#1}%
-	\ref{#1}%
+	\rdfref@oldpageref{#1}%
 }
 
 

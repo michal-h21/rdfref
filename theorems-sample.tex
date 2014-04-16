@@ -2,7 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[]{tgschola}
 \usepackage[T1]{fontenc}
-%\catcode`\_=12
+\usepackage{nameref}
+\usepackage{hyperref}
 \usepackage[]{rdfref-user,rdfref-query,lipsum,nameref,cleveref}
 \usepackage{amsthm,thmtools,xstring}
 \declaretheorem[name=Lemma,Refname={Lemma,Lemmas}]{lem}
@@ -10,10 +11,8 @@
 \declaretheorem[name=Theorem,Refname={Theorem,Theorems}]{thr}
 
 \begin{document}
-\thepage \thepage
 \inputontology{theorem-ontology.tex}
 \let\ref\rdfref
-\thepage
 \section{Hello world}\rdflabel{sec:first}
 \lipsum[1-2]
   \begin{lem}\rdflabel{thm:lem1}
@@ -46,7 +45,7 @@ In particular, the list of primes,
 is infinite.
 \end{thr}
 
-As it was said in theorem \rdfref{thm:euclid}, we see that 
+As it was said in theorem \ref{thm:euclid}, we see that 
 
 \forcsvlist{\listadd\typelist}{sec:sectioning,thm:theorem,eq:equation,thm:proposition,thm:proposition,thm:lemma}
 \forcsvlist{\listadd\proplist}{doc:pageNo,doc:partOf,doc:hasParent}
@@ -64,34 +63,56 @@ As it was said in theorem \rdfref{thm:euclid}, we see that
  }%
  {\typeout{Objekt \GetVal{?x} neni v listu}}%
 }
-\thepage
+%\thepage
+\newpage
+And now print theorem info:
 
 \typeout{Tak co sec?: \GetProperty{sec:sectioning}{rdf:type}}
 
 % Make list of objects, which are type of thm:theorem
-
 % use query to add type #2 to list #1
+% helper function, this will serch for all 
 \newcommand\buildtypelist[2]{%
-	\listadd#1{#2}
-	\Bind{?x}{rdf:type}{#2}{%
+	\listadd#1{#2} % add searched 
+	\Bind{?x}{rdfs:subClassOf}{#2}{%
+		% only direct children of #2 are taken into account
 		\listxadd#1{\GetVal{?x}}% must be global and expanded
 	}%
 }
+
+%
 \buildtypelist\theoremlist{thm:theorem}
-\Bind{?ref}{rdf:type}{doc:reference}{%
-	\edef\ReferedObj{\GetProperty{\GetVal{?ref}}{doc:refersTo}}
-	\edef\ReferedType{\GetProperty{\ReferedObj}{rdf:type}}
-	\Bind{?ref}{doc:refersTo}{?obj}{
-	  \typeout{refered type:\ReferedType, label\GetValProperty{?obj}{rdfs:label}}
-  }
+\newcommand\MakeLabel[1]{%
+	\Bind{#1}{rdf:type}{?type}{% get type of parent
+		\textbf{\GetValProperty{?type}{rdfs:label}} % parent type label
+	}% 
+	% now clickable reference to parent
+	\hyperref[\GetVal{#1}]{\GetValProperty{#1}{rdfs:label}}%
 }
-
-
 \renewcommand\do[1]{%
 \Bind{?obj}{rdf:type}{#1}{%
-\textbf{\GetValProperty{?obj}{rdfs:label}}
-				\typeout{sss: \GetVal{?obj} - \GetValProperty{?obj}{rdfs:label}} 
+% Prin basic info about the object
+\par Object type: 
+\textbf{\GetValProperty{#1}{rdfs:label}}, % #1 is theorem type label 
+% now clickable reference to label of current object
+value:\textbf{\hyperref[\GetVal{?obj}]{\GetValProperty{?obj}{rdfs:label}}},
+% and just label
+label: [\GetVal{?obj}].
+% Print info about parent object:
+\Bind{?obj}{doc:hasParent}{?par}{% parent label
+	\par \hspace{2em}Parent object:%
+  \MakeLabel{?par}%	
+}%
+\def\refinfo{\par\hspace{2em} Referenced by:\par\hspace{3em}}
+\Bind{?ref}{doc:refersTo}{?obj}{%
+ \refinfo\def\refinfo{\par\hspace{3em}}%
+ \GetValProperty{?ref}{rdfs:label} in
+ \Bind{?ref}{doc:hasParent}{?par}{%
+	 \MakeLabel{?par}%
+ }, p. \hyperpage{\GetValProperty{?ref}{doc:pageNo}};%
+}%
 }}
 \dolistloop\theoremlist
 
 \end{document}
+

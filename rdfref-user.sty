@@ -70,7 +70,8 @@
 	\AddPropertyEx{doc:pageNo}{\thepage}%
 	\AddPropertyEx{rdf:type}{doc:reference}%
 	\AddPropertyEx{doc:refersTo}{#1}%
-	\AddPropertyEx{rdfs:label}{Reference: \GetProperty{#1}{rdfs:label}}%
+	\AddTripleEx{#1}{doc:referedBy}{\CurrentObject}%
+	\AddPropertyEx{rdfs:label}{Blank node: \rdf@blk\the\rdf@blank@cnt}%
 	\egroup%
 }
 	

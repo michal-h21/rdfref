@@ -2,6 +2,10 @@
 \AddPropertyEx{doc:partOf}{#1}
 }
 
+\newcommand\subClassOf[1]{%
+	\AddPropertyEx{rdfs:subClassOf}{#1}
+}
+
 
 \AddRdfType{Theorem}{%
 \AddProperty{rdf:type}{thm:theorem}
@@ -49,16 +53,19 @@
 }
 \WithObject{thm:proposition}{%
 \AddProperty{rdfs:label}{Proposition}
-\AddProperty{rdf:type}{thm:theorem}
+\AddProperty{rdf:type}{rdfs:Class}
+\AddProperty{rdfs:subClassOf}{thm:theorem}
 }
 \WithObject{thm:lemma}{%
 \AddProperty{rdfs:label}{Lemma}
-\AddProperty{rdf:type}{thm:theorem}
+\AddProperty{rdf:type}{rdfs:Class}
+\AddProperty{rdfs:subClassOf}{thm:theorem}
 }
 
 \WithObject{eq:equation}{%
 \AddProperty{rdfs:label}{Equation}
-\AddProperty{rdf:type}{thm:theorem}
+\AddProperty{rdf:type}{rdfs:Class}
+\AddProperty{rdfs:subClassOf}{thm:theorem}
 }
 \WithObject{rdfs:Class}{%
 \AddProperty{rdfs:label}{Class}

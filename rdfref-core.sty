@@ -55,7 +55,9 @@
 }
 \newcommand\MapSubjectList[2]{%
 \def\do##1{#2}%
+\ifcsdef{sbjlst@#1}{%
 \dolistcsloop{sbjlst@#1}%
+}{}%
 }
 
 \newcommand\PropertyListAdd[3]{%
@@ -63,7 +65,9 @@
 }
 \newcommand\MapPropertyList[2]{%
 \def\do##1{#2}%
+\ifcsdef{prprtlst@#1}{%
 \dolistcsloop{prprtlst@#1}%
+}{}%
 }
 
 

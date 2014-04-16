@@ -31,8 +31,8 @@
 \egroup%
 }
 \newcommand\DeclareQueryProcessor[2]{%
-\csgdef{rdfquery@proc@#1}##1{%
-\def\continue{##1}%
+\long\csgdef{rdfquery@proc@#1}##1{%
+\long\def\continue{##1}%
 #2}%
 }
 
@@ -41,8 +41,8 @@
 \def\Value##1{##1}%
 \def\Var##1{##1}%
 \MapPropertyList\predicate{%
-\SaveVal\subject{\First##1}%
-\SaveVal\object{\Second##1}%
+\SaveVal\subject{\ifx\\##1\\\else\First##1\fi}%
+\SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
 \continue
 }%
 }
@@ -54,10 +54,10 @@
 \def\Var##1{##1}
 \MapPropertyList\predicate{%
 	% only do action if searched \object is equal to current objeect
-	\IfStrEq{\object}{\Second##1}{%
+	\IfStrEq{\object}{\ifx\\##1\\\else\Second##1\fi}{%
 	% ##1 is variable passed by \do, two tokens are here:
-	  \SaveVal\subject{\First##1}%
-	  \SaveVal\object{\Second##1}%
+	  \SaveVal\subject{\ifx\\##1\\\else\First##1\fi}%
+	  \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
     \continue}{}%
  }%
 }
@@ -108,6 +108,8 @@
 \ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
 \egroup%
 }
+
+% what is the purpose of this command?
 \newcommand\OptionalBind[3]{%
 %\bgroup%
 \BindVal\subject{#1}%

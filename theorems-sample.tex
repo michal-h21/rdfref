@@ -89,6 +89,9 @@ And now print theorem info:
 	% now clickable reference to parent
 	\hyperref[\GetVal{#1}]{\GetValProperty{#1}{rdfs:label}}%
 }
+
+
+
 \renewcommand\do[1]{%
 \Bind{?obj}{rdf:type}{#1}{%
 % Prin basic info about the object
@@ -113,6 +116,78 @@ label: [\GetVal{?obj}].
 }%
 }}
 \dolistloop\theoremlist
+
+% Now export a theorem graph
+
+% Make expandable label
+\newcommand\MakePlainLabel[1]{%
+	\GetProperty{\GetProperty{#1}{rdf:type}}{rdfs:label}
+	\GetProperty{#1}{rdfs:label}
+}
+
+% Make list of used nodes, every node should be added only once
+\makeatletter
+% #1 list csname #2 node prefix #3 subject
+\newcommand\AddNode[3]{%
+	%\edef\node@id{\GetVal{#3}}
+	\ifcsdef{node@lbl@#2@#3}{}{%
+		\listxadd#1{#3}
+		\csgdef{node@lbl@#2@#3}{\MakePlainLabel{#3}}
+	}%
+}
+
+\newcommand\UseNode[2]{%
+	\csuse{node@lbl@#1@#2}%
+}
+
+\def\coltoun#1:#2;{#1_#2}% graphwiz doesn't support colon in names 
+
+\def\graphrelations{}
+\newcommand\AddRelation[3]{
+	\edef\tempa{#1}
+	\edef\tempb{#2}
+	\AddNode\mynodes{myn}{#1}
+	\AddNode\mynodes{myn}{#2}
+	\xdef\graphrelations{%
+		\graphrelations \expandafter\coltoun\tempa; -> \expandafter\coltoun\tempb; [#3];^^J
+	}
+}
+
+\renewcommand\do[1]{%
+	\Bind{?obj}{rdf:type}{#1}{%
+		%\AddNode\mynodes{myn}{\GetVal{?obj}}
+		\IfProperty{\GetVal{?obj}}{doc:partOf}{%
+			\edef\parnode{\GetValProperty{?obj}{doc:partOf}}
+		}{
+			\edef\parnode{\GetValProperty{?obj}{doc:hasParent}}
+		}
+		\AddRelation{\GetVal{?obj}}{\parnode}{}
+		\Bind{?ref}{doc:refersTo}{?obj}{%
+			\def\parnode{\GetValProperty{?ref}{doc:hasParent}}
+			\AddRelation{\parnode}{\GetVal{?obj}}{style=dotted}
+		}
+
+	}
+}
+\dolistloop\theoremlist
+
+\newwrite\graphwrite
+\newcommand\graphopen[1]{%
+	\immediate\openout\graphwrite=#1%
+}
+\newcommand\graphout[1]{\immediate\write\graphwrite{#1}}
+
+
+\renewcommand\do[1]{%
+	\graphout{\coltoun#1; [label="\MakePlainLabel{#1}"]}
+}
+
+
+\graphopen{\jobname.dot}
+\graphout{digraph hello\@charlb}
+\dolistloop\mynodes
+\graphout{\graphrelations}
+\graphout{\@charrb}
 
 \end{document}
 

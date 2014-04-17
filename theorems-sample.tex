@@ -125,37 +125,40 @@ label: [\GetVal{?obj}].
 	\GetProperty{#1}{rdfs:label}
 }
 
-% Make list of used nodes, every node should be added only once
 \makeatletter
+% Make list of used nodes, every node should be added only once
 % #1 list csname #2 node prefix #3 subject
 \newcommand\AddNode[3]{%
-	%\edef\node@id{\GetVal{#3}}
 	\ifcsdef{node@lbl@#2@#3}{}{%
 		\listxadd#1{#3}
 		\csgdef{node@lbl@#2@#3}{\MakePlainLabel{#3}}
 	}%
 }
 
-\newcommand\UseNode[2]{%
-	\csuse{node@lbl@#1@#2}%
-}
-
+% replace colons with underscores
 \def\coltoun#1:#2;{#1_#2}% graphwiz doesn't support colon in names 
 
 \def\graphrelations{}
-\newcommand\AddRelation[3]{
-	\edef\tempa{#1}
-	\edef\tempb{#2}
-	\AddNode\mynodes{myn}{#1}
-	\AddNode\mynodes{myn}{#2}
+
+% connect nodes
+% #1 source node #2 destination #3 graphviz style
+\newcommand\AddRelation[3]{%
+	\edef\tempa{#1}%
+	\edef\tempb{#2}%
+	% add node label. we can call \AddNode for node multiple times,
+	% node is beeing added only once
+	\AddNode\mynodes{myn}{#1}%
+	\AddNode\mynodes{myn}{#2}%
+	% store relations in a macro
 	\xdef\graphrelations{%
 		\graphrelations \expandafter\coltoun\tempa; -> \expandafter\coltoun\tempb; [#3];^^J
-	}
+	}%
 }
 
 \renewcommand\do[1]{%
 	\Bind{?obj}{rdf:type}{#1}{%
-		%\AddNode\mynodes{myn}{\GetVal{?obj}}
+		% select parent node. for lemmas etc, which use doc:partOf property, 
+		% use that, otherwise use doc:has:parent
 		\IfProperty{\GetVal{?obj}}{doc:partOf}{%
 			\edef\parnode{\GetValProperty{?obj}{doc:partOf}}
 		}{
@@ -163,31 +166,39 @@ label: [\GetVal{?obj}].
 		}
 		\AddRelation{\GetVal{?obj}}{\parnode}{}
 		\Bind{?ref}{doc:refersTo}{?obj}{%
+			% select references to a theorem and print parent subject
 			\def\parnode{\GetValProperty{?ref}{doc:hasParent}}
 			\AddRelation{\parnode}{\GetVal{?obj}}{style=dotted}
 		}
-
 	}
 }
+
+% again loop over al theorems
 \dolistloop\theoremlist
 
+% now prepare output file for the graphviz output
 \newwrite\graphwrite
+
+% macros for opening and writing to the graph file
 \newcommand\graphopen[1]{%
 	\immediate\openout\graphwrite=#1%
 }
+
 \newcommand\graphout[1]{\immediate\write\graphwrite{#1}}
 
 
+\graphopen{\jobname.dot}
+\graphout{digraph hello\@charlb} % save graph header
+
+% save labels
 \renewcommand\do[1]{%
 	\graphout{\coltoun#1; [label="\MakePlainLabel{#1}"]}
 }
-
-
-\graphopen{\jobname.dot}
-\graphout{digraph hello\@charlb}
 \dolistloop\mynodes
+
+% save graph relations
 \graphout{\graphrelations}
-\graphout{\@charrb}
+\graphout{\@charrb} % save footer
 
 \end{document}
 

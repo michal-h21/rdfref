@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{rdfref-user}
+\usepackage{marginnote}
+
+% #1 citekey for the publication
+\newcommand\publication[1]{%
+	% define blank node prefix, this should enable using notes from 
+	% multiple files
+	\def\rdf@blk{#1}
+	\BlankNode
+	\
+	\edef\notepagepub{#1}%
+}
+\newcommand\notepage[1]{%
+	\BlankNode%
+  
+	\edef\notepagelabel{#1}% Save 
+}
+\begin{document}
+\title{Book reading notetaking system with rdfref}
+
+Co je třeba
+
+- definovat zpracovávanou publikaci
+- odkazovat na definovatelný pasáže (stránky, nadpisy, čísla sekcí)
+- v makru uchovávat label současný pasáže
+- v poznmkách a citacích se odkazovat na label pasáže
+- poznámky samostatný autoimatický labely nebo labely v nepovinných parametrech
+- odkazy na otázky, slovník atd se vztahují k poznámkám
+
+\reversemarginpar
+Pokus\marginnote{[1]}
+\end{document}
+

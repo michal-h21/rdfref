@@ -21,14 +21,14 @@
 % pagu number or some other identifier
 \newcommand\notepage[1]{%
 	\BlankNode%
-  \AddProperty{rdf:type}{ann:pageNo}
-	\AddPropertyEx{ann:hasSource}{\notepagepub}
-	\AddPropertyEx{ann:hasIdentifier}{#1}
+  \AddProperty{rdf:type}{ann:pageNo}%
+	\AddPropertyEx{ann:hasSource}{\notepagepub}%
+	\AddPropertyEx{ann:hasIdentifier}{#1}%
 	\edef\notepagelabel{\CurrentObject}% Save current
 	\printIdentifier{#1}%
 }
 
-\def\printIdentifier#1{\marginnote{[#1]}}
+\def\printIdentifier#1{\reversemarginpar\marginnote{[#1]}}
 
 % common annotation command, derived command should be used in the document
 \newcommand\annotation[3][]{%
@@ -37,27 +37,35 @@
   \else%
 	  \def\CurrentObject{#1}%
   \fi%
-	\AddProperty{rdf:type}{#2}
-	\AddPropertyEx{ann:refersTo}{\notepagelabel}
-	\AddProperty{ann:note}{#3}
-	\printAnnotation{#3}
+	\AddProperty{rdf:type}{#2}%
+	\AddPropertyEx{ann:refersTo}{\notepagelabel}%
+	\AddProperty{ann:note}{#3}%
+	\printAnnotation{#3}%
 }
+
+% this is to be redefined in derived annotation commands
 \def\printAnnotation#1{#1}
 
 \newcommand\notequote[2][]{%
 \let\printAnnotation\enquote%
-\annotation[#1]{#2}%
+\annotation[#1]{ann:quote}{#2}%
 }
+
+
+\newcommand\notethought[2][]{%
+\let\printAnnotation\textrm%
+\annotation[#1]{ann:thought}{#2}%
+}
+
 
 \begin{document}
 \title{Book reading notetaking system with rdfref}
 
-\reversemarginpar
 \source{bib:pepa14}
 \notepage{1}
 
-\annotation{ann:quote}{Ahoj světe}
-\annotation[ex:uff]{ann:thought}{To je ale \textit{něco}}
+\notequote{Ahoj světe}
+\notethought[ex:uff]{To je ale \textit{něco}}
 Co je třeba
 
 - definovat zpracovávanou publikaci

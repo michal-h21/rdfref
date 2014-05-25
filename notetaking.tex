@@ -3,22 +3,31 @@
 \usepackage{marginnote}
 
 % #1 citekey for the publication
-\newcommand\publication[1]{%
+\makeatletter
+\newcommand\source[1]{%
 	% define blank node prefix, this should enable using notes from 
 	% multiple files
 	\def\rdf@blk{#1}
 	\BlankNode
-	\
-	\edef\notepagepub{#1}%
+	\AddProperty{rdf:type}{ann:publication}
+	\AddProperty{ann:citekey}{#1}
+	\edef\notepagepub{\CurrentObject}%
 }
+
+% pagu number or some other identifier
 \newcommand\notepage[1]{%
 	\BlankNode%
-  
-	\edef\notepagelabel{#1}% Save 
+  \AddProperty{rdf:type}{ann:pageNo}
+	\AddPropertyEx{ann:hasSource}{\notepagepub}
+	\AddPropertyEx{ann:hasIdentifier}{#1}
+	\edef\notepagelabel{\CurrentObject}% Save current 
 }
+
 \begin{document}
 \title{Book reading notetaking system with rdfref}
 
+\source{bib:pepa14}
+\notepage{1}
 Co je třeba
 
 - definovat zpracovávanou publikaci

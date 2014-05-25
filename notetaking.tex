@@ -1,6 +1,10 @@
 \documentclass{article}
 \usepackage{rdfref-user}
 \usepackage{marginnote}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{csquotes}
 
 % #1 citekey for the publication
 \makeatletter
@@ -9,7 +13,7 @@
 	% multiple files
 	\def\rdf@blk{#1}
 	\BlankNode
-	\AddProperty{rdf:type}{ann:publication}
+	\AddProperty{rdf:type}{ann:source}
 	\AddProperty{ann:citekey}{#1}
 	\edef\notepagepub{\CurrentObject}%
 }
@@ -20,14 +24,40 @@
   \AddProperty{rdf:type}{ann:pageNo}
 	\AddPropertyEx{ann:hasSource}{\notepagepub}
 	\AddPropertyEx{ann:hasIdentifier}{#1}
-	\edef\notepagelabel{\CurrentObject}% Save current 
+	\edef\notepagelabel{\CurrentObject}% Save current
+	\printIdentifier{#1}%
+}
+
+\def\printIdentifier#1{\marginnote{[#1]}}
+
+% common annotation command, derived command should be used in the document
+\newcommand\annotation[3][]{%
+  \ifx\relax#1\relax%
+	  \BlankNode%
+  \else%
+	  \def\CurrentObject{#1}%
+  \fi%
+	\AddProperty{rdf:type}{#2}
+	\AddPropertyEx{ann:refersTo}{\notepagelabel}
+	\AddProperty{ann:note}{#3}
+	\printAnnotation{#3}
+}
+\def\printAnnotation#1{#1}
+
+\newcommand\notequote[2][]{%
+\let\printAnnotation\enquote%
+\annotation[#1]{#2}%
 }
 
 \begin{document}
 \title{Book reading notetaking system with rdfref}
 
+\reversemarginpar
 \source{bib:pepa14}
 \notepage{1}
+
+\annotation{ann:quote}{Ahoj světe}
+\annotation[ex:uff]{ann:thought}{To je ale \textit{něco}}
 Co je třeba
 
 - definovat zpracovávanou publikaci
@@ -37,7 +67,5 @@ Co je třeba
 - poznámky samostatný autoimatický labely nebo labely v nepovinných parametrech
 - odkazy na otázky, slovník atd se vztahují k poznámkám
 
-\reversemarginpar
-Pokus\marginnote{[1]}
 \end{document}
 

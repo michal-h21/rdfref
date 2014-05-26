@@ -6,8 +6,36 @@
 \usepackage[czech]{babel}
 \usepackage{csquotes}
 
-% #1 citekey for the publication
 \makeatletter
+
+% Formatting macros
+
+% #1 - rdf:type 
+% #2 formatting code
+\newcommand\DeclareRdfFormat[2]{%
+	\expandafter\newcommand\csname rdfformat#1\endcsname[1]{#2}
+}
+
+% #1 - rdf:type of printed element [optional]
+% #2 - printed text
+\newcommand\UseRdfFormat[2][]{%
+	% use rdf:type of current object when optional argument is epmty
+  \ifx\relax#1\relax%
+	  \edef\tmp@curr{\GetProperty{\CurrentObject}{rdf:type}}%
+	\else%
+	  \edef\tmp@curr{#1}
+	\fi%
+	% make format name
+	\edef\tmp@curr{rdfformat\tmp@curr}
+	%\expandafter\typeout\expandafter{\tmp@curr}
+	%\typeout{\ifcsdef{\tmp@curr}{format existuje}{format neexistuje}}
+	\ifcsdef{\tmp@curr}{\csuse{\tmp@curr}{#2}}{\csuse{rdfformatdefault}{#2}}	
+}
+
+% this format will be used when no formatting exists for given rdf:type
+\DeclareRdfFormat{default}{#1}
+
+% #1 citekey for the publication
 \newcommand\source[1]{%
 	% define blank node prefix, this should enable using notes from 
 	% multiple files
@@ -25,10 +53,11 @@
 	\AddPropertyEx{ann:hasSource}{\notepagepub}%
 	\AddPropertyEx{ann:hasIdentifier}{#1}%
 	\edef\notepagelabel{\CurrentObject}% Save current
-	\printIdentifier{#1}%
+	%\printIdentifier{#1}%
+	\UseRdfFormat{#1}
 }
 
-\def\printIdentifier#1{\reversemarginpar\marginnote{[#1]}}
+\DeclareRdfFormat{ann:pageNo}{\bgroup{\reversemarginpar\marginnote{[#1]}}\egroup}
 
 % common annotation command, derived command should be used in the document
 \newcommand\annotation[3][]{%
@@ -41,6 +70,7 @@
 	\AddPropertyEx{ann:refersTo}{\notepagelabel}%
 	\AddProperty{ann:note}{#3}%
 	\printAnnotation{#3}%
+  \UseRdfFormat{#3}%
 }
 
 % this is to be redefined in derived annotation commands
@@ -57,6 +87,7 @@
 \annotation[#1]{ann:thought}{#2}%
 }
 
+\DeclareRdfFormat{ann:thought}{\par \textit{#1}}
 
 \begin{document}
 \title{Book reading notetaking system with rdfref}

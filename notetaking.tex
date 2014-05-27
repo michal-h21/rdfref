@@ -5,6 +5,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[czech]{babel}
 \usepackage{csquotes}
+\usepackage{hyperref}
+
 
 \makeatletter
 
@@ -13,7 +15,7 @@
 % #1 - rdf:type 
 % #2 formatting code
 \newcommand\DeclareRdfFormat[2]{%
-	\expandafter\newcommand\csname rdfformat#1\endcsname[1]{#2}
+	\expandafter\def\csname rdfformat#1\endcsname##1{#2}
 }
 
 % #1 - rdf:type of printed element [optional]
@@ -69,7 +71,7 @@
 	\AddProperty{rdf:type}{#2}%
 	\AddPropertyEx{ann:refersTo}{\notepagelabel}%
 	\AddProperty{ann:note}{#3}%
-	\printAnnotation{#3}%
+	%\printAnnotation{#3}%
   \UseRdfFormat{#3}%
 }
 
@@ -80,6 +82,7 @@
 \let\printAnnotation\enquote%
 \annotation[#1]{ann:quote}{#2}%
 }
+\DeclareRdfFormat{ann:quote}{\par\textit{#1}}
 
 
 \newcommand\notethought[2][]{%
@@ -87,16 +90,92 @@
 \annotation[#1]{ann:thought}{#2}%
 }
 
-\DeclareRdfFormat{ann:thought}{\par \textit{#1}}
+\DeclareRdfFormat{ann:thought}{\par{#1}}
+
+\newcounter{notequestion}
+\def\thenotequestion{Q. \arabic{notequestion}}
+% #1 - label is mandatory
+% #2 - question
+\newcommand\notequestion[2]{%
+	\refstepcounter{notequestion}%
+	\edef\CurrentObject{#1}%
+	\AddProperty{rdf:type}{ann:question}%
+	\AddPropertyEx{rdfs:label}{\thenotequestion}%
+	\AddProperty{ann:note}{#2}%
+	\rdfref@oldlabel{#1}%
+	\UseRdfFormat{#2}%
+}
+\DeclareRdfFormat{ann:question}{\thenotequestion\quad#1}
+
+%
+\newenvironment{questions}{%
+	\list{\thenotequestion}{}%
+	\DeclareRdfFormat{ann:question}{\item ##1}
+}{\endlist}
+%}{}
+
+\newcommand\notelink[2]{%
+	%\BlankNode%
+	\bgroup%
+	\rdfref@core{#2}%
+	% overwrite rdf:type
+	\AddProperty{rdf:type}{#1}%
+	\UseRdfFormat[#1]{#2}
+	\egroup%
+}
+\newcommand\noteanswer[1]{%
+	\notelink{ann:answer}{#1}%
+}
+
+\DeclareRdfFormat{ann:answer}{\marginnote{{\footnotesize $\rightarrow$\GetProperty{#1}{rdfs:label}}}}
+
+% declare and term
+\newcommand\noteterm[2]{%
+	\bgroup%
+	\let\ParentObject\CurrentObject%
+	\edef\CurrentObject{#1}%
+	\AddProperty{rdf:type}{ann:term}%
+	\AddProperty{ann:note}{#2}%
+	\note@ref{#1}
+	\egroup%
+}
+
+\newcommand\note@ref[1]{%
+	\BlankNode%
+	\AddProperty{rdf:type}{ann:termRef}%
+	\AddPropertyEx{doc:pageNo}{\thepage}%
+	\AddPropertyEx{doc:refersTo}{\ParentObject}%
+	\AddPropertyEx{ann:termUse}{#1}%
+	\AddTripleEx{\ParentObject}{doc:referedBy}{\CurrentObject}%
+	\UseRdfFormat{\CurrentObject}%
+}
+% use reviously declared term
+\newcommand\noteref[1]{%
+	\bgroup%
+	\let\ParentObject\CurrentObject
+	\note@ref{#1}
+	\egroup%
+}
+\DeclareRdfFormat{ann:termRef}{\GetProperty{\GetProperty{#1}{ann:termUse}}{ann:note}}
 
 \begin{document}
 \title{Book reading notetaking system with rdfref}
 
+\maketitle
+
+\begin{questions}
+	\notequestion{quest:pomoc}{Pokus, jestli otázky fungujou}
+  \notequestion{quest:other}{Jak vypadají otázky mimo prostředí questions?}
+\end{questions}
+
 \source{bib:pepa14}
 \notepage{1}
 
-\notequote{Ahoj světe}
-\notethought[ex:uff]{To je ale \textit{něco}}
+\notequote{Ahoj světe}\noteterm{ind:pokus}{Pokus}
+\notethought[ex:uff]{To je ale \textit{něco}}\noteanswer{quest:pomoc}
+\noteref{ind:pokus}
+
+
 Co je třeba
 
 - definovat zpracovávanou publikaci

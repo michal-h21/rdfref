@@ -61,27 +61,31 @@
 }
 
 % replacement for \ref
-\newcommand\rdfref@core[1]{%
+\newcommand\rdfref@core[2]{%
 	\bgroup%
 % save \CurrentObject
 	\edef\ParentObject{\CurrentObject}%
 	\BlankNode% \CurrentObject is blank node
 	\AddPropertyEx{doc:hasParent}{\ParentObject}%
 	\AddPropertyEx{doc:pageNo}{\thepage}%
-	\AddPropertyEx{rdf:type}{doc:reference}%
 	\AddPropertyEx{doc:refersTo}{#1}%
 	\AddTripleEx{#1}{doc:referedBy}{\CurrentObject}%
 	\AddPropertyEx{rdfs:label}{Blank node: \rdf@blk\the\rdf@blank@cnt}%
+  #2
 	\egroup%
 }
 	
 \newcommand\rdfref[1]{%
-	\rdfref@core{#1}%
+	\rdfref@core{#1}{%
+    \AddPropertyEx{rdf:type}{doc:reference}%
+  }
 	\rdfref@oldref{#1}%
 }
 
 \newcommand\rdfpageref[1]{%
-	\rdfref@core{#1}%
+	\rdfref@core{#1}{%
+	  \AddPropertyEx{rdf:type}{doc:pagereference}%
+  }
 	\rdfref@oldpageref{#1}%
 }
 

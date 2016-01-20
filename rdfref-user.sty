@@ -71,21 +71,21 @@
 	\AddPropertyEx{doc:refersTo}{#1}%
 	\AddTripleEx{#1}{doc:referedBy}{\CurrentObject}%
 	\AddPropertyEx{rdfs:label}{Blank node: \rdf@blk\the\rdf@blank@cnt}%
-  #2
+  #2%
 	\egroup%
 }
 	
 \newcommand\rdfref[1]{%
 	\rdfref@core{#1}{%
     \AddPropertyEx{rdf:type}{doc:reference}%
-  }
+  }%
 	\rdfref@oldref{#1}%
 }
 
 \newcommand\rdfpageref[1]{%
 	\rdfref@core{#1}{%
 	  \AddPropertyEx{rdf:type}{doc:pagereference}%
-  }
+  }%
 	\rdfref@oldpageref{#1}%
 }
 

@@ -51,13 +51,13 @@
 
 % replacement for \label
 \newcommand\rdflabel[1]{%
+\rdfref@oldlabel{#1}
 \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
 \AddTriple{#1}{doc:envir}{\@currenvir}%
 \def\CurrentObject{#1}%
 \ifcsdef{rdf:type@\GuessRdfType{#1}}%
 {\csuse{rdf:type@\GuessRdfType{#1}}}%
 {\typeout{Package rdfref error: unknown type of reference #1 :\GuessRdfType{#1}:}}%
-\rdfref@oldlabel{#1}
 }
 
 % replacement for \ref

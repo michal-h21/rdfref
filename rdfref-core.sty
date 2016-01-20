@@ -16,8 +16,9 @@
 
 % If we need to write something expanded, like \thepage
 \newcommand\AddTripleEx[3]{%
-\edef\rdf@object{#3}%
-\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
+% \edef\rdf@object{#3}%
+% \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
+\protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}
 }
 
 \newcommand\SetProperty[3]{%

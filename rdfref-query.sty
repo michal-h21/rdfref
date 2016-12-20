@@ -62,13 +62,18 @@
  }%
 }
 
+
 \DeclareQueryProcessor{llv}{%
-\def\Value##1{##1}%
-\def\Var##1{##1}%
-\IfProperty{\subject}{\predicate}{%
-  \SaveVal\object{\GetProperty{\subject}{\predicate}}
-  \continue}{}
+  \def\Value##1{##1}%
+  \def\Var##1{##1}%
+  % Subject can have multiple values of property, so we need to loop over them
+  \MapPropertyList\predicate{%
+    \IfStrEq\subject{\ifx\\##1\\\else\First##1\fi}{%
+      \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+    \continue}{}%
+  }%
 }%
+
 
 \DeclareQueryProcessor{lvv}{%
  \def\Value##1{##1}%

@@ -22,22 +22,31 @@
 }
 
 \newcommand\SetProperty[3]{%
-\protected@csxdef{rdf@#1@#2}{#3}%
+% \protected@csxdef{rdf@#1@#2}{#3}%
+  \listcsxadd{rdf@#1@#2}{#3}%
 }
 
 \newcommand\IfProperty[2]{%
 \ifcsdef{rdf@#1@#2}%
 }
+
+\def\MatchFirstProperty#1|#2\@nil{#1\typeout{getting #1, #2,}}
+
+\def\GetFirstProperty#1{%
+  \MatchFirstProperty#1|\@nil
+}
+
 \newcommand\GetProperty[2]{%
-\IfProperty{#1}{#2}{%
-\csuse{rdf@#1@#2}%
-}{%
-\PropertyNotDef{#1}{#2}%
-}%
+  \IfProperty{#1}{#2}{%
+    % \expandafter\expandafter\expandafter\GetFirstProperty\expandafter\csuse\expandafter{rdf@#1@#2}|\@nil%
+    \expandafter\GetFirstProperty\expandafter{\csuse{rdf@#1@#2}}%
+    }{%
+    \PropertyNotDef{#1}{#2}%
+  }%
 }
 \newcommand\PropertyNotDef[2]{%
 ???%
-%\typeout{rdf warning: subject #1 has no property #2}%
+\typeout{rdf warning: subject #1 has no property #2}%
 }
 \edef\Hash{\string#}
 

@@ -30,16 +30,27 @@
 \ifcsdef{rdf@#1@#2}%
 }
 
-\def\MatchFirstProperty#1|#2\@nil{#1\typeout{getting #1, #2,}}
+% we use etoolbox's list to store property array
+% character | is used to delimit the records, it has
+% changed catcode, so we must do some trickery to parse 
+% it correctly
+\@tempcnta=\the\catcode`\|
+\catcode`\|=3
+\def\MatchFirstProperty#1|#2\@nil{#1}
 
-\def\GetFirstProperty#1{%
+\newcommand\GetFirstProperty[1]{%
   \MatchFirstProperty#1|\@nil
 }
+\catcode`\|=\@tempcnta
 
+% Object can have multiple occassions of an property, 
+% we get only the first one with \GetProperty command
+% You need to use looping commands to get also the other 
+% values
 \newcommand\GetProperty[2]{%
   \IfProperty{#1}{#2}{%
-    % \expandafter\expandafter\expandafter\GetFirstProperty\expandafter\csuse\expandafter{rdf@#1@#2}|\@nil%
-    \expandafter\GetFirstProperty\expandafter{\csuse{rdf@#1@#2}}%
+    \edef\@temp{\expandafter\csname rdf@#1@#2\endcsname}
+    \expandafter\GetFirstProperty\expandafter{\@temp}
     }{%
     \PropertyNotDef{#1}{#2}%
   }%

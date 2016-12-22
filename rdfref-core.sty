@@ -71,14 +71,15 @@
 \csgdef{rdfprefix@#1}{#2}%
 }
 }
-\newcommand\SubjectListAdd[2]{%
-\listcsgadd{sbjlst@#1}{#2}%
+\newcommand\SubjectListAdd[3]{%
+  \listcsgadd{sbjlst@#1}{{#2}{#3}}%
 }
 \newcommand\MapSubjectList[2]{%
-\def\do##1{#2}%
-\ifcsdef{sbjlst@#1}{%
-\dolistcsloop{sbjlst@#1}%
-}{}%
+  % \def\tmp@sbj{\MapObjectList{
+  \def\do##1{#2}%
+  \ifcsdef{sbjlst@#1}{%
+    \dolistcsloop{sbjlst@#1}%
+  }{}%
 }
 
 \newcommand\PropertyListAdd[3]{%

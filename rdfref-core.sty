@@ -49,8 +49,8 @@
 % values
 \newcommand\GetProperty[2]{%
   \IfProperty{#1}{#2}{%
-    \edef\@temp{\csname rdf@#1@#2\endcsname}
-    \expandafter\GetFirstProperty\expandafter{\@temp}
+    \edef\@temp{\csname rdf@#1@#2\endcsname}%
+    \expandafter\GetFirstProperty\expandafter{\@temp}%
     }{%
     \PropertyNotDef{#1}{#2}%
   }%

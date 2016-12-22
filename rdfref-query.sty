@@ -79,8 +79,8 @@
  \def\Value##1{##1}%
  \def\Var##1{##1}%
  \MapSubjectList\subject{%
-  \SaveVal\predicate{##1}%
-  \SaveVal\object{\GetProperty{\subject}{##1}}%
+  \SaveVal\predicate{\ifx\\##1\\\else\First##1\fi}%
+  \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
   \continue%
  }%
 }

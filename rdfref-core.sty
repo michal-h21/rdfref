@@ -41,7 +41,7 @@
 \newcommand\GetFirstProperty[1]{%
   \MatchFirstProperty#1|\@nil
 }
-\catcode`\|=\@tempcnta
+\catcode`\|=\the\@tempcnta
 
 % Object can have multiple occassions of an property, 
 % we get only the first one with \GetProperty command
@@ -49,7 +49,7 @@
 % values
 \newcommand\GetProperty[2]{%
   \IfProperty{#1}{#2}{%
-    \edef\@temp{\expandafter\csname rdf@#1@#2\endcsname}
+    \edef\@temp{\csname rdf@#1@#2\endcsname}
     \expandafter\GetFirstProperty\expandafter{\@temp}
     }{%
     \PropertyNotDef{#1}{#2}%

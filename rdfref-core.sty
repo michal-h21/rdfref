@@ -53,8 +53,9 @@
 % get the current value of the property
 \newcommand\GetProperty[2]{%
   \IfProperty{#1}{#2}{%
-    \edef\@temp{\csname rdf@#1@#2@val\endcsname}%
-    \@temp%
+    % \edef\@temp{\csname rdf@#1@#2@val\endcsname}%
+    % \@temp%
+    \csuse{rdf@#1@#2@val}%
     }{%
     \PropertyNotDef{#1}{#2}%
   }%
@@ -62,6 +63,11 @@
 \newcommand\PropertyNotDef[2]{%
 ???%
 \typeout{rdf warning: subject #1 has no property #2}%
+}
+
+% variant of \GetProperty that doesn't check for existence of the property
+\newcommand\GetPropertyNoCheck[2]{%
+  \csuse{rdf@#1@#2@val}%
 }
 
 % #1 object, #2 property

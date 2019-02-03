@@ -36,6 +36,7 @@
 #2}%
 }
 
+% v means variable to be looked up, l is searched literal
 \DeclareQueryProcessor{vlv}{%
 % why we redefine \Value and \Var? I should write comments next time
 \def\Value##1{##1}%
@@ -57,7 +58,7 @@
 	\IfStrEq{\object}{\ifx\\##1\\\else\Second##1\fi}{%
 	% ##1 is variable passed by \do, two tokens are here:
 	  \SaveVal\subject{\ifx\\##1\\\else\First##1\fi}%
-	  \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+	  % \SaveVal\predicate{\ifx\\##1\\\else\Second##1\fi}% no need to save predicate, as we are looking only for subject in this query processor
     \continue}{}%
  }%
 }
@@ -100,7 +101,7 @@
 \DeclareQueryProcessor{lll}{%
 \def\Value##1{##1}%
 \def\Var##1{##1}%
-\IfStrEq{\GetProperty{\subject}{\predicate}}{\object}{\continue}{Neshoduj\'i se}
+\IfStrEq{\GetPropertyNoCheck{\subject}{\predicate}}{\object}{\continue}{}%
 }
 
 

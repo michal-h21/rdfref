@@ -10,6 +10,7 @@
 }
 \newcommand\AddTriple[3]{%
 %\edef\rdf@object{#3}
+\SetProperty{#1}{#2}{#3}%
 \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}%
 %\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
 }
@@ -18,11 +19,14 @@
 \newcommand\AddTripleEx[3]{%
 % \edef\rdf@object{#3}%
 % \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
+\SetProperty{#1}{#2}{#3}%
 \protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}
 }
 
 \newcommand\SetProperty[3]{%
-% \protected@csxdef{rdf@#1@#2}{#3}%
+  % set the current value
+  \protected@csxdef{rdf@#1@#2@val}{#3}%
+  % add property to the property list
   \listcsxadd{rdf@#1@#2}{#3}%
 }
 
@@ -43,14 +47,11 @@
 }
 \catcode`\|=\the\@tempcnta
 
-% Object can have multiple occassions of an property, 
-% we get only the first one with \GetProperty command
-% You need to use looping commands to get also the other 
-% values
+% get the current value of the property
 \newcommand\GetProperty[2]{%
   \IfProperty{#1}{#2}{%
-    \edef\@temp{\csname rdf@#1@#2\endcsname}%
-    \expandafter\GetFirstProperty\expandafter{\@temp}%
+    \edef\@temp{\csname rdf@#1@#2@val\endcsname}%
+    \@temp%
     }{%
     \PropertyNotDef{#1}{#2}%
   }%

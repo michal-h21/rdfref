@@ -30,8 +30,11 @@
   \listcsxadd{rdf@#1@#2}{#3}%
 }
 
+% test if a property exist
+% property can be removed by setting to empty value using the following command
+% \SetProperty{object}{property}{}
 \newcommand\IfProperty[2]{%
-\ifcsdef{rdf@#1@#2}%
+  \ifboolexpr{not test {\ifcsvoid{rdf@#1@#2@val}}}%
 }
 
 % we use etoolbox's list to store property array

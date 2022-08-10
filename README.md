@@ -1,6 +1,11 @@
 # The `rdfref` package
 
-This package is inspired by RDF. It doesn't have any documentation yet, but you can see the samples of usage in answers on TeX.sx:
+This package is inspired by
+[RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework). You can
+declare custom commands that save various metadata for objects. These metadata
+can be then looked up using simple query language.
+
+It doesn't have any documentation yet, but you can see the samples of usage in answers on TeX.sx:
 
 - [Compiling a separate list of "Open Questions" found in the main text in order of appearance](https://tex.stackexchange.com/a/435455/2891)
 - [Analysis of cross-reference/link network within a single document](https://tex.stackexchange.com/a/288647/2891)

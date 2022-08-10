@@ -5,6 +5,8 @@ dist_dir = $(build_dir)/$(package_name)
 doc_name = $(package_name)-doc
 doc_pdf = $(doc_name).pdf
 doc_src = $(doc_name).tex
+TEXMFHOME = $(shell kpsewhich -var-value=TEXMFHOME)
+INSTALL_DIR = $(TEXMFHOME)/tex/latex/rdfref
 
 VERSION:= $(shell git --no-pager describe --abbrev=0 --tags --always )
 DATE := $(firstword $(shell git --no-pager show --date=short --format="%ad" --name-only))
@@ -20,3 +22,7 @@ build: $(doc_pdf)
 	@rm -rf $(build_dir)
 	@mkdir -p $(dist_dir)
 	@cp $(packages) $(doc_pdf) $(doc_src) $(dist_dir)
+
+install: $(doc_pdf)
+	mkdir -p $(INSTALL_DIR)
+	cp $(packages) $(doc_pdf) $(INSTALL_DIR)

@@ -51,8 +51,8 @@
 \DeclareQueryProcessor{vll}{%
 	% this is first querry processor after two years, I have no idea what 
 	% needs to be done
-\def\Value##1{##1}
-\def\Var##1{##1}
+\def\Value##1{##1}%
+\def\Var##1{##1}%
 \MapPropertyList\predicate{%
 	% only do action if searched \object is equal to current objeect
 	\IfStrEq{\object}{\ifx\\##1\\\else\Second##1\fi}{%
@@ -112,7 +112,7 @@
 \BindVal\predicate{#2}%
 \BindVal\object{#3}%
 \QueryType\subject\predicate\object%
-\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Unknown RDF query processor:} \qtype}}%
 \egroup%
 }
 
@@ -123,7 +123,7 @@
 \BindVal\predicate{#2}%
 \BindVal\object{#3}%
 \QueryType\subject\predicate\object%
-\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{}}{\typeout{\detokenize{Unknown RDF query processor:} \qtype}}%
 %#4
 %\egroup%  
 }

@@ -13,6 +13,7 @@ It doesn't have any documentation yet, but you can see the samples of usage in a
 - [Show graph of references inside a document](https://tex.stackexchange.com/a/171854/2891)
 - [Define a command (like table of contents) but for attendees](https://tex.stackexchange.com/a/473193/2891)
 - [Output depending on crossreferences](https://tex.stackexchange.com/a/342805/2891)
+- [Implementing a very basic index from scratch](https://tex.stackexchange.com/a/653603/2891)
 
 
 # Installation

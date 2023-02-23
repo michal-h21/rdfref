@@ -27,14 +27,14 @@
   % set the current value
   \protected@csxdef{rdf@#1@#2@val}{#3}%
   % add property to the property list
-  \listcsxadd{rdf@#1@#2}{#3}%
+  \listcsxadd{rdf@#1@#2}{\unexpanded{#3}}%
 }
 
 % test if a property exist
 % property can be removed by setting to empty value using the following command
 % \SetProperty{object}{property}{}
 \newcommand\IfProperty[2]{%
-  \ifboolexpr{not test {\ifcsvoid{rdf@#1@#2@val}}}%
+  \ifboolexpe{not test {\ifcsvoid{rdf@#1@#2@val}}}%
 }
 
 % we use etoolbox's list to store property array

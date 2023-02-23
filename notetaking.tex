@@ -117,7 +117,8 @@
 \newcommand\notelink[2]{%
 	%\BlankNode%
 	\bgroup%
-	\rdfref@core{#2}%
+	% \rdfref@core{#2}%
+	\rdfref{#2}%
 	% overwrite rdf:type
 	\AddProperty{rdf:type}{#1}%
 	\UseRdfFormat[#1]{#2}

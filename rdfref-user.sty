@@ -18,7 +18,7 @@
 % shouldn't this be in rdfref-core?
 % Save property definitions, they are saved with \rdflabel
 \newcommand\AddRdfType[2]{%
-\def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}
+\def\do##1{\csgdef{rdf:type@##1}{\noexpand\unexpanded{#2}}}%
 %\csgdef{rdf:type@#1}{\unexpanded{#2}}
 \docsvlist{#1}
 }
@@ -35,7 +35,7 @@
 \newcommand\WithObject[2]{%
 \begingroup%
 \def\CurrentObject{#1}%
-\def\run{#2}
+\def\run{#2}%
 \run%
 \endgroup%
 }
@@ -56,11 +56,11 @@
 
 % replacement for \label
 \newcommand\rdflabel[1]{%
-  \rdfref@oldlabel{#1}
+  \rdfref@oldlabel{#1}%
   \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
   \AddTriple{#1}{doc:envir}{\@currenvir}%
   \def\CurrentObject{#1}%
-  \UseRdfType{#1}
+  \UseRdfType{#1}%
 }
 
 % replacement for \ref
@@ -105,26 +105,26 @@
 % import ontology
 \newcount\undercat
 \newcommand\inputontology[1]{%
-\makeatletter
-\undercat=\the\catcode`\_
-\catcode`\_=12
-\input{#1}
-\catcode`\_=\the\undercat
-\makeatother
+\makeatletter%
+\undercat=\the\catcode`\_%
+\catcode`\_=12%
+\input{#1}%
+\catcode`\_=\the\undercat%
+\makeatother%
 }
 
 % This is horrible
 \newcommand\ExportGraphviz[2]{%
-digraph G\{
-\forcsvlist{\listadd\typelist}{#1}
+digraph G\{%
+\forcsvlist{\listadd\typelist}{#1}%
 %\forcsvlist{\listadd\propertylist}{#2}
 \def\worker##1##2{%
 %"\ObjectLabel" -> \GetProperty{\First##1}
-\edef\ppp{\GetProperty{##1}{##2}}
-\typeout{Worker: ##1: ##1 : \ppp}
+\edef\ppp{\GetProperty{##1}{##2}}%
+\typeout{Worker: ##1: ##1 : \ppp}%
 \IfSubStr{\ppp}{???}{}{%
 "\ObjectLabel" -> %
-\IfSubStr{\ppp}{:}{"\GetProperty{\GetProperty{\ppp}{rdf:type}}{rdfs:label}: \GetProperty{\ppp}{rdfs:label}"}{"\ppp"} %
+\IfSubStr{\ppp}{:}{"\GetProperty{\GetProperty{\ppp}{rdf:type}}{rdfs:label}: \GetProperty{\ppp}{rdfs:label}"}{"\ppp"}%
 %\GetProperty{##1}{##2} 
  [label="##2"];\\%
 }
@@ -136,10 +136,10 @@ digraph G\{
 \bgroup%
 %\MapObjectList{\First##1}{}
 \forcsvlist{\worker{\First##1}}{#2}%
-\egroup
+\egroup%
 }%
 {}%
-}
-\}
-}
+}%
+\}%
+}%
 \endinput

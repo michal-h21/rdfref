@@ -20,7 +20,7 @@
 % \edef\rdf@object{#3}%
 % \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
 \SetProperty{#1}{#2}{#3}%
-\protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}
+\protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}%
 }
 
 \newcommand\SetProperty[3]{%

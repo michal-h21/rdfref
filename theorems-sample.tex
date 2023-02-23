@@ -55,13 +55,13 @@ As it was said in theorem \ref{thm:euclid}, we see that
    \Bind{?x}{rdfs:label}{?objectl}{%
    \Bind{?c}{rdfs:label}{?typel}{% 
     \xifinlist{\GetVal{?k}}{\proplist}{%
-     \IfSubStr{\GetVal{?v}}{:}{\edef\ObjectLabel{\GetProperty{\GetProperty{\GetVal{?v}}{rdf:type}}{rdfs:label}}}{\edef\ObjectLabel{\GetVal{?v}}}
-     \typeout{\GetVal{?objectl} : \GetVal{?typel} \detokenize{má klíč }\GetVal{?k} s hodnotou \ObjectLabel}%
+     \IfProperty{\GetVal{?v}}{rdf:type}{\def\ObjectLabel{\GetProperty{\GetProperty{\GetVal{?v}}{rdf:type}}{rdfs:label}}}{\def\ObjectLabel{\GetVal{?v}}}
+     \typeout{Object \GetVal{?objectl} : \GetVal{?typel} \detokenize{has key }\GetVal{?k} with value: \ObjectLabel}%
     }{} 
    }}%
   }%
  }%
- {\typeout{Objekt \GetVal{?x} neni v listu}}%
+ {\typeout{Object \GetVal{?x} of type \GetVal{?c} is not contained in typelist}}%
 }
 %\thepage
 \newpage

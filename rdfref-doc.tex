@@ -3,6 +3,8 @@
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{fontspec}
+\usepackage{csquotes}
+\usepackage{showexpl}
 \setmainfont{TeX Gyre Schola}
 \setmonofont[Scale=MatchLowercase]{Inconsolatazi4}
 \usepackage{microtype}
@@ -13,6 +15,42 @@
 \maketitle
 \tableofcontents
 
+\section{Introduction}
+
+\href{https://en.wikipedia.org/wiki/Resource_Description_Framework}{RDF (Resource Description Framework)}
+is a standard model for representing and
+exchanging data on the web. It provides a flexible way to describe resources
+such as people, places, and things, as well as their relationships and
+attributes.
+
+RDF data is structured as triples, which consist of a subject, a predicate, and
+an object. The subject represents the resource being described, the predicate
+represents the relationship or attribute being described, and the object
+represents the value of that relationship or attribute. For example, a triple
+might describe a person (the subject) having a name (the predicate) of \enquote{John
+Smith} (the object).
+
+Rdfref is a package that brings some of the RDF concepts to \LaTeX. It allows
+setting properties to different objects, which can then be retrieved using a
+query language based on various criteria. Objects can be, for example,
+chapters, equations, or images. Properties can be page numbers, counter values,
+captions, and so on.
+
+
+\section{Tutorial}
+
+\subsection{Low-level functions}
+
+\begin{LTXexample}
+  % set 
+  \SetProperty{person:michal}{name}{Michal}
+  My name is: \GetProperty{person:michal}{name}
+
+\end{LTXexample}
+
+\subsection{Query Language}
+
+\subsection{Add-ons for \LaTeX\ cross-referencing}
 
 
 \end{document}

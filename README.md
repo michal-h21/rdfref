@@ -19,3 +19,7 @@ It doesn't have any documentation yet, but you can see the samples of usage in a
 # Installation
 
 You can either clone this repository to your local TEXMF tree (typically `~/texmf/tex/latex` on UNIX like systems), or clone it to any local directory and run the `make install` command.
+
+# Documentation
+
+You can run `make` to create a documentation and example document. You will need [dot2tex](https://github.com/xyz2tex/dot2tex) to make a dependency graph of theorems.

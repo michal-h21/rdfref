@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{nameref}
 \usepackage{hyperref}
+\usepackage{tikz}
 \usepackage[]{rdfref-user,rdfref-query,lipsum,nameref}
 \usepackage{amsthm,thmtools,xstring}
 \declaretheorem[name=Lemma,Refname={Lemma,Lemmas}]{lem}
@@ -204,6 +205,13 @@ And now print theorem info:
 % save graph relations
 \graphout{\graphrelations}
 \graphout{\@charrb} % save footer
+\immediate\closeout\graphwrite
+
+\begin{figure}
+
+\InputIfFileExists{theorems-sample-graph.tex}{}{}
+\caption{Dependency graph of theorems}
+\end{figure}
 
 \end{document}
 

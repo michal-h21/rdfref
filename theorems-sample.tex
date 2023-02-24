@@ -69,9 +69,9 @@ And now print theorem info:
 
 \typeout{Tak co sec?: \GetProperty{sec:sectioning}{rdf:type}}
 
-% Make list of objects, which are type of thm:theorem
+% Make list of classes, which are subclasses of thm:theorem
 % use query to add type #2 to list #1
-% helper function, this will serch for all 
+% this helper list will be used to loop over all theorems
 \newcommand\buildtypelist[2]{%
 	\listadd#1{#2} % add searched 
 	\Bind{?x}{rdfs:subClassOf}{#2}{%
@@ -80,8 +80,9 @@ And now print theorem info:
 	}%
 }
 
-%
+% build list of theorems
 \buildtypelist\theoremlist{thm:theorem}
+
 \newcommand\MakeLabel[1]{%
 	\Bind{#1}{rdf:type}{?type}{% get type of parent
 		\textbf{\GetValProperty{?type}{rdfs:label}} % parent type label
@@ -93,28 +94,32 @@ And now print theorem info:
 
 
 \renewcommand\do[1]{%
-\Bind{?obj}{rdf:type}{#1}{%
-% Prin basic info about the object
-\par Object type: 
-\textbf{\GetProperty{#1}{rdfs:label}}, % #1 is theorem type label 
-% now clickable reference to label of current object
-value:\textbf{\hyperref[\GetVal{?obj}]{\GetValProperty{?obj}{rdfs:label}}},
-% and just label
-label: [\GetVal{?obj}].
-% Print info about parent object:
-\Bind{?obj}{doc:hasParent}{?par}{% parent label
-	\par \hspace{2em}Parent object:%
-  \MakeLabel{?par}%	
-}%
-\def\refinfo{\par\hspace{2em} Referenced by:\par\hspace{3em}}
-\Bind{?ref}{doc:refersTo}{?obj}{%
- \refinfo\def\refinfo{\par\hspace{3em}}%
- \GetValProperty{?ref}{rdfs:label} in
- \Bind{?ref}{doc:hasParent}{?par}{%
-	 \MakeLabel{?par}%
- }, p. \hyperpage{\GetValProperty{?ref}{doc:pageNo}};%
-}%
-}}
+  % loop over all objects that have rdf:type of the argument
+  \Bind{?obj}{rdf:type}{#1}{%
+    % Print basic info about the object
+    \par Object type: 
+    \textbf{\GetProperty{#1}{rdfs:label}}, % #1 is theorem type label 
+    % now clickable reference to label of current object
+    value:\textbf{\hyperref[\GetVal{?obj}]{\GetValProperty{?obj}{rdfs:label}}},
+    % and just label
+    label: [\GetVal{?obj}].
+    % Print info about parent object:
+    \Bind{?obj}{doc:hasParent}{?par}{% parent label
+      \par \hspace{2em}Parent object:%
+      \MakeLabel{?par}%	
+    }% print objects that reference the current theorem
+    \def\refinfo{\par\hspace{2em} Referenced by:\par\hspace{3em}}
+    \Bind{?ref}{doc:refersTo}{?obj}{%
+      \refinfo\def\refinfo{\par\hspace{3em}}%
+      \GetValProperty{?ref}{rdfs:label} in
+      \Bind{?ref}{doc:hasParent}{?par}{%
+        \MakeLabel{?par}%
+      }, p. \hyperpage{\GetValProperty{?ref}{doc:pageNo}};%
+    }%
+  }
+}
+
+% this will execute \do macro for each element in the \theoremlist
 \dolistloop\theoremlist
 
 % Now export a theorem graph

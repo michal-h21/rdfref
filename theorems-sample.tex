@@ -96,7 +96,7 @@ And now print theorem info:
 \Bind{?obj}{rdf:type}{#1}{%
 % Prin basic info about the object
 \par Object type: 
-\textbf{\GetValProperty{#1}{rdfs:label}}, % #1 is theorem type label 
+\textbf{\GetProperty{#1}{rdfs:label}}, % #1 is theorem type label 
 % now clickable reference to label of current object
 value:\textbf{\hyperref[\GetVal{?obj}]{\GetValProperty{?obj}{rdfs:label}}},
 % and just label

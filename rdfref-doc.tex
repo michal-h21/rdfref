@@ -36,17 +36,61 @@ query language based on various criteria. Objects can be, for example,
 chapters, equations, or images. Properties can be page numbers, counter values,
 captions, and so on.
 
+The initial impulse for the creation of this package was the need to create a
+dependency graph between individual elements of a document, such as which
+chapters reference individual theorems. However, over time the package has
+evolved to be useful for other purposes as well.
 
 \section{Tutorial}
 
+
+\subsection{Basic concepts}
+
+Objects and properties typically have the form "namespace:name".
+
+This naming convention helps to avoid naming conflicts between different
+objects and properties, and allows for more organized and modular code. The
+namespace portion of the name identifies the context or domain to which the
+object or property belongs, while the name portion provides a unique identifier
+within that context.
+
+Let's say we want to assign the property \enquote{person:name} with the value \enquote{Michal}
+to an object with the identifier \enquote{authors:michal}. 
+
+
+In this case, the identifier \enquote{authors:michal} serves as a unique
+identifier for an object in a specific context. The identifier
+belongs to an object that represents a person named \enquote{michal} in namespace \enquote{authors}.
+
+The \enquote{person} namespace identifies the context of the propety as
+being related to personal information, and the \enquote{name} property specifies a
+specific attribute of that object. 
+
+In this case, the value associated with the "person:name" property is the
+string "Michal". In other cases, the value associated with a property may also
+be an identifier that references another object. This is a common pattern in
+data modeling and can be used to establish relationships between objects.
+
+
+By using this naming convention consistently
+throughout your code, you can ensure that your objects and properties are
+well-organized and easy to manage.
+
+
+
+
+
 \subsection{Low-level functions}
 
-\begin{LTXexample}
-  % set 
-  \SetProperty{person:michal}{name}{Michal}
-  My name is: \GetProperty{person:michal}{name}
+
+We can model the example from the previous section using the following code:
+
+\begin{LTXexample}[pos=b]
+  \SetProperty{authors:michal}{person:name}{Michal}
+  My name is: \GetProperty{authors:michal}{person:name}
 
 \end{LTXexample}
+
 
 \subsection{Query Language}
 

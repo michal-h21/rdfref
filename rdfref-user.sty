@@ -55,7 +55,7 @@
 \let\rdfref@oldpageref\pageref
 
 % replacement for \label
-\newcommand\rdflabel[1]{%
+\DeclareRobustCommand\rdflabel[1]{%
   \rdfref@oldlabel{#1}%
   \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
   \AddTriple{#1}{doc:envir}{\@currenvir}%
@@ -78,14 +78,14 @@
 	\egroup%
 }
 	
-\newcommand\rdfref[1]{%
+\DeclareRobustCommand\rdfref[1]{%
 	\rdfref@core{#1}{%
     \AddPropertyEx{rdf:type}{doc:reference}%
   }%
 	\rdfref@oldref{#1}%
 }
 
-\newcommand\rdfpageref[1]{%
+\DeclareRobustCommand\rdfpageref[1]{%
 	\rdfref@core{#1}{%
 	  \AddPropertyEx{rdf:type}{doc:pagereference}%
   }%

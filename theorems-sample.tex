@@ -127,7 +127,7 @@ And now print theorem info:
 
 % Make expandable label
 \newcommand\MakePlainLabel[1]{%
-	\GetProperty{\GetProperty{#1}{rdf:type}}{rdfs:label}
+  \IfProperty{#1}{rdf:type}{\GetProperty{\GetProperty{#1}{rdf:type}}{rdfs:label}}{}
 	\GetProperty{#1}{rdfs:label}
 }
 

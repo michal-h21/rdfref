@@ -105,12 +105,16 @@
 % import ontology
 \newcount\undercat
 \newcommand\inputontology[1]{%
-\makeatletter%
-\undercat=\the\catcode`\_%
-\catcode`\_=12%
-\input{#1}%
-\catcode`\_=\the\undercat%
-\makeatother%
+  \ifcsdef{inputed:ontology:#1}{}{%
+    \makeatletter%
+    \undercat=\the\catcode`\_%
+    \catcode`\_=12%
+    \input{#1}%
+    \catcode`\_=\the\undercat%
+    \makeatother%
+  }
+  % prevent multiple insertion of the ontology
+  \csgdef{inputed:ontology:#1}{}
 }
 
 % This is horrible

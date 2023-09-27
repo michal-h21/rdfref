@@ -10,7 +10,7 @@
 }
 
 \newcommand\SaveVal[2]{%
-\csedef{rdfquery@#1}{#2}%
+\protected@csedef{rdfquery@#1}{#2}%
 }
 
 \newcommand\GetValProperty[2]{%

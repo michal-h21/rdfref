@@ -191,7 +191,7 @@ And now print theorem info:
 	\immediate\openout\graphwrite=#1%
 }
 
-\newcommand\graphout[1]{\immediate\write\graphwrite{#1}}
+\newcommand\graphout[1]{\protected@write\graphwrite{}{#1}}
 
 
 \graphopen{\jobname.dot}

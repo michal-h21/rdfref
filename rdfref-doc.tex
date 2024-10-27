@@ -66,8 +66,8 @@ The \enquote{person} namespace identifies the context of the propety as
 being related to personal information, and the \enquote{name} property specifies a
 specific attribute of that object. 
 
-In this case, the value associated with the "person:name" property is the
-string "Michal". In other cases, the value associated with a property may also
+In this case, the value associated with the \enquote{person:name} property is the
+string \enquote{Michal}. In other cases, the value associated with a property may also
 be an identifier that references another object. This is a common pattern in
 data modeling and can be used to establish relationships between objects.
 
@@ -86,7 +86,7 @@ well-organized and easy to manage.
 We can model the example from the previous section using the following code:
 
 \begin{LTXexample}[pos=b]
-  \SetProperty{authors:michal}{person:name}{Michal}
+  \AssignProperty{authors:michal}{person:name}{Michal}
   My name is: \GetProperty{authors:michal}{person:name}
 
 \end{LTXexample}

@@ -10,7 +10,7 @@
 }
 \newcommand\AddTriple[3]{%
 %\edef\rdf@object{#3}
-\SetProperty{#1}{#2}{#3}%
+\AssignProperty{#1}{#2}{#3}%
 \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}%
 %\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
 }
@@ -19,11 +19,11 @@
 \newcommand\AddTripleEx[3]{%
 % \edef\rdf@object{#3}%
 % \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
-\SetProperty{#1}{#2}{#3}%
+\AssignProperty{#1}{#2}{#3}%
 \protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}%
 }
 
-\newcommand\SetProperty[3]{%
+\newcommand\AssignProperty[3]{%
   % set the current value
   \protected@csxdef{rdf@#1@#2@val}{#3}%
   % add property to the property list
@@ -32,7 +32,7 @@
 
 % test if a property exist
 % property can be removed by setting to empty value using the following command
-% \SetProperty{object}{property}{}
+% \AssignProperty{object}{property}{}
 \newcommand\IfProperty[2]{%
   \ifboolexpe{not test {\ifcsvoid{rdf@#1@#2@val}}}%
 }
@@ -113,7 +113,7 @@
 
 
 \newcommand\LoadTriple[3]{%
-\SetProperty{#1}{#2}{#3}%
+\AssignProperty{#1}{#2}{#3}%
 \SubjectListAdd{#1}{#2}{#3}%
 \PropertyListAdd{#1}{#2}{#3}%
 }

@@ -59,7 +59,10 @@
   \rdfref@oldlabel{#1}%
   \AddTriple{#1}{doc:hasParent}{\CurrentObject}%
   \AddTriple{#1}{doc:envir}{\@currenvir}%
-  \def\CurrentObject{#1}%
+  % make the current object global, because \rdflabel can be used in environments, like equations
+  % by making it global, it will be set as the current object in subsequent text, so for example 
+  % \rdfref after equation will use this equation as a parent object
+  \gdef\CurrentObject{#1}%
   \UseRdfType{#1}%
 }
 

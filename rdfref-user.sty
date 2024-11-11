@@ -105,6 +105,15 @@
 }%
 }
 
+% test if object has property that is contained in a list of values
+% #1 variable 
+% #2 property 
+% #3 list of values to test
+\newcommand\IfRdfProperty[3]{%
+  \def\@tempa{#3}%
+  \xifinlist{\GetProperty{#1}{#2}}{\@tempa}
+}
+
 % import ontology
 \newcount\undercat
 \newcommand\inputontology[1]{%

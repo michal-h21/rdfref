@@ -1,5 +1,6 @@
 \ProvidesPackage{rdfref-query}
 \RequirePackage{rdfref-core}
+\RequirePackage{rdfref-user}
 \def\Var#1{Variable: #1}
 \def\Value#1{Value: #1}
 
@@ -21,6 +22,15 @@
 \newcommand\GetVal[1]{%
 \csuse{rdfquery@#1}%
 }
+
+% test if variable has property that is contained in a list of values
+% #1 variable 
+% #2 property 
+% #3 list of values to test
+\newcommand\IfValProperty[3]{%
+  \IfRdfProperty{\GetVal{#1}}{#2}{#3}%
+}
+
 
 
 \newcommand\QueryType[3]{%
@@ -62,6 +72,7 @@
     \continue}{}%
  }%
 }
+
 
 
 \DeclareQueryProcessor{llv}{%

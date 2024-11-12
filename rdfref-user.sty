@@ -105,13 +105,24 @@
 }%
 }
 
+\newtoggle{RdfPropertyToggle}
+
 % test if object has property that is contained in a list of values
 % #1 variable 
 % #2 property 
 % #3 list of values to test
+% #4 true branch 
+% #5 false branch
 \newcommand\IfRdfProperty[3]{%
   \def\@tempa{#3}%
-  \xifinlist{\GetProperty{#1}{#2}}{\@tempa}
+  \IfProperty{#1}{#2}{%
+    % if the list is empty, but property exists, execute true branch
+    \ifstrempty{#3}{\toggletrue{RdfPropertyToggle}}{%
+      % otherwise test if the property is included in the list
+      \xifinlist{\GetProperty{#1}{#2}}{\@tempa}{\toggletrue{RdfPropertyToggle}}{\togglefalse{RdfPropertyToggle}}%
+    }%
+  }{\togglefalse{RdfPropertyToggle}}%
+  \iftoggle{RdfPropertyToggle}%
 }
 
 % import ontology

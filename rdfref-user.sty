@@ -66,6 +66,7 @@
   \UseRdfType{#1}%
 }
 
+
 % replacement for \ref
 \newcommand\rdfref@core[2]{%
 	\bgroup%
@@ -123,6 +124,25 @@
     }%
   }{\togglefalse{RdfPropertyToggle}}%
   \iftoggle{RdfPropertyToggle}%
+}
+
+% loop over all references
+% #1 list of allowed rdf:type for objects
+% #2 list of allowed rdf:type for subjects
+% #3 code to be executed
+\newcommand\RdfLoopReferences[3]{%
+  \Bind{?node}{doc:refersTo}{?subject}{%
+    % the following two commands can be used in the executed code
+    % this is object where \ref or \pareref was used
+    \def\currentobject{\GetValProperty{?node}{doc:hasParent}}%
+    % this is referenced object
+    \def\currentsubject{\GetValProperty{?node}{doc:refersTo}}%
+    \IfRdfProperty{\currentobject}{rdf:type}{#1}{%
+      \IfRdfProperty{\currentsubject}{rdf:type}{#2}{%
+        #3%
+      }{}%
+    }{}%
+  }%
 }
 
 % import ontology

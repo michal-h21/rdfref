@@ -115,7 +115,9 @@
 % #4 true branch 
 % #5 false branch
 \newcommand\IfRdfProperty[3]{%
-  \def\@tempa{#3}%
+  % first build etoolbox list
+  \def\@tempa{}%
+  \forcsvlist{\listadd\@tempa}{#3}%
   \IfProperty{#1}{#2}{%
     % if the list is empty, but property exists, execute true branch
     \ifstrempty{#3}{\toggletrue{RdfPropertyToggle}}{%

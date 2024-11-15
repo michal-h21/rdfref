@@ -32,6 +32,13 @@
 \AddTripleEx{\CurrentObject}{#1}{#2}%
 }
 
+% define basic properties for the document
+\AtBeginDocument{
+  \AddProperty{rdf:type}{doc:root}
+  \AddProperty{rdfs:label}{Document}
+  \AddProperty{doc:name}{\jobname}
+}
+
 \newcommand\WithObject[2]{%
 \begingroup%
 \def\CurrentObject{#1}%

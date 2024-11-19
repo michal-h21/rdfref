@@ -209,7 +209,7 @@
   \rdf@graphout{\@charrb}% save footer
   \immediate\closeout\rdf@graphwrite%
   \ShellEscape{dot2tex~--figonly~--autosize~-t~raw~-o~#1.tmp~#1.dot }%
-  \InputIfFileExists{#1.tmp}{}%
+  \IfFileExists{#1.tmp}{\input{#1.tmp}}{}%
 }
 \ExplSyntaxOff
 

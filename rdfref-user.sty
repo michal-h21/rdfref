@@ -154,6 +154,65 @@
   }%
 }
 
+\newwrite\rdf@graphwrite
+
+\newcommand\rdf@graphout[1]{\protected@write\rdf@graphwrite{\let\owrite\write\def\write{\immediate\owrite}}{#1}}
+
+\ExplSyntaxOn
+% #1 name of the graph (default \jobname-graph) -- it needs to be different than name of any existing file!
+% #2 RDF property to be printed
+% #3 list of allowed rdf:type for objects
+% #4 list of allowed rdf:type for subjects
+% don't forget to call latex with --shell-escape 
+\NewDocumentCommand\RdfDrawParentGraph{O{\jobname-graph} O{rdfs:label} m m}{%
+  \immediate\openout\rdf@graphwrite=#1.dot\relax%
+  \rdf@graphout{digraph~hello\@charlb} % save graph header
+  \Bind{?child}{doc:hasParent}{?parent}{%
+    % \typeout{********** Parent \GetVal{?parent}}
+    % handle \ref and \pageref
+    \edef\currentobject{\GetVal{?parent}}%
+    \edef\currentsubject{\GetVal{?child}}%
+    \IfValProperty{?child}{doc:refersTo}{}{%
+      \edef\currentsubject{\GetValProperty{?child}{doc:refersTo}}%
+    }{}%
+    \let\objectlabel\currentobject
+    \let\subjectlabel\currentsubject
+    \regex_replace_all:nnN{[:\-]}{_}\objectlabel
+    \regex_replace_all:nnN{[:\-]}{_}\subjectlabel
+    \rdf@graphout{\objectlabel [shape="rectangle",texlbl="\GetProperty{\currentobject}{rdfs:label}"]}%
+    \rdf@graphout{\subjectlabel [shape="rectangle",texlbl="\GetProperty{\currentsubject}{rdfs:label}"]}%
+    \rdf@graphout{\objectlabel~->~\subjectlabel} %
+  }
+  \rdf@graphout{\@charrb}% save footer
+  \immediate\closeout\rdf@graphwrite%
+  \ShellEscape{dot2tex~--figonly~--autosize~-t~raw~-o~#1.tmp~#1.dot }%
+  \IfFileExists{#1.tmp}{\input{#1.tmp}}{}
+}
+
+% #1 name of the graph (default \jobname-graph) -- it needs to be different than name of any existing file!
+% #2 RDF property to be printed
+% #3 list of allowed rdf:type for objects
+% #4 list of allowed rdf:type for subjects
+% don't forget to call latex with --shell-escape 
+\NewDocumentCommand\RdfDrawGraph{O{\jobname-graph} O{rdfs:label} m m}{%
+  \immediate\openout\rdf@graphwrite=#1.dot\relax%
+  \rdf@graphout{digraph hello\@charlb} % save graph header
+  \RdfLoopReferences{#3}{#4}{%
+    \edef\objectlabel{\currentobject}%
+    \edef\subjectlabel{\currentsubject}%
+    \regex_replace_all:nnN{[:\-]}{_}\objectlabel%
+    \regex_replace_all:nnN{[:\-]}{_}\subjectlabel%
+    \rdf@graphout{\objectlabel [shape="rectangle",texlbl="\GetProperty{\currentobject}{#2}"]}
+    \rdf@graphout{\subjectlabel [shape="rectangle",texlbl="\GetProperty{\currentsubject}{#2}"]}
+    \rdf@graphout{\objectlabel~->~\subjectlabel} %
+  }
+  \rdf@graphout{\@charrb}% save footer
+  \immediate\closeout\rdf@graphwrite%
+  \ShellEscape{dot2tex~--figonly~--autosize~-t~raw~-o~#1.tmp~#1.dot }%
+  \InputIfFileExists{#1.tmp}{}%
+}
+\ExplSyntaxOff
+
 % import ontology
 \newcount\undercat
 \newcommand\inputontology[1]{%
